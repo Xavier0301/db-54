@@ -1,8 +1,8 @@
-ROUGH SKETCH OF ER MODEL:
+# ROUGH SKETCH OF ER MODEL:
 
-|COLLISION| --- <INVOLVES> <-- |PARTY| --- <ASSOCIATED WITH> <-- |VICTIM|
+|COLLISION| --- \<INVOLVES\> <-- |PARTY| --- \<ASSOCIATED WITH\> <-- |VICTIM|
 
-PARTICIPATION CONSTRAINTS:
+# PARTICIPATION CONSTRAINTS:
 
 - Partial participation from collision in the 'involves' relationship:
         case_id 10 has no involved party.
@@ -13,7 +13,7 @@ PARTICIPATION CONSTRAINTS:
 - 'Exactly one' participation from victim in the 'associated with' relationship:
         Given a case_id, if there is a victim, there is a party (unique).
 
-ATTRIBUTES CLUSTERING:
+# ATTRIBUTES CLUSTERING:
 
 I think clustering the attributes when it makes sense is a good idea:
 
@@ -24,7 +24,7 @@ to repeat or appear to be logically a separate entity
 We already did most of the clustering, the rest of the work is a matter on 
 aggregating ideas.
 
-ADDITIONAL CONSTRAINTS:
+# ADDITIONAL CONSTRAINTS:
 
 - Key/participation constraints already covered. (Are those two different?)
 - No ISA relationship hence no covering/overlap constraint.
@@ -33,7 +33,7 @@ ADDITIONAL CONSTRAINTS:
 - Now, the other constraints we cannot express using ER model are important 
     to mention in the report.
 
-SQL DDLs:
+# SQL DDLs:
 
 TODO:
 - Review this shit.
@@ -45,6 +45,7 @@ Do we refine data types?
 - If we don't reduce enum what argument do we give VARCHAR()?
     A good upper-bound? The exact max length of an entry?
 
+```SQL
 CREATE TABLE Collisions(case_id INTEGER, 
                         collision_date DATE,
                         collision_time TIME,
@@ -53,8 +54,11 @@ CREATE TABLE Collisions(case_id INTEGER,
                         hit_and_run VARCHAR(20),
                         tow_away BIT NOT NULL,                        
                         PRIMARY KEY(case_id)) 
+```
 
 Not sure about the CHAR(1) for violation subsection.
+
+```SQL
 CREATE TABLE Pcfs(case_id INTEGER,
                     pcf_violation INTEGER,
                     pcf_violation_category VARCHAR(30),
@@ -81,10 +85,12 @@ CREATE TABLE Cases(case_id INTEGER,
                     officer_id INTEGER,
                     jurisdiction INTEGER,
                     FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
+```
 
 Only permanent attributes of a party are stored in the Parties table.
 Attributes from the context of the accident are stored in the PartyContexts table.
 
+```SQL
 CREATE TABLE Parties(id INTEGER,
                         case_id INTEGER,
                         party_number INTEGER,
@@ -113,10 +119,12 @@ CREATE TABLE Vehicles(party_id INTEGER,
                         vehicle_make ???,
                         vehicle_year ???,
                         FOREIGN KEY(party_id) REFERENCES Parties(party_id))
+```
 
 Again, all relevant context specific attributes of the victim are stored
 in a separate table. 
 
+```SQL
 CREATE TABLE Victims(id INTEGER,
                         case_id INTEGER,
                         party_number INTEGER,
@@ -133,3 +141,4 @@ CREATE TABLE VictimContexts(victim_id INTEGER,
                             victim_safety_equipment_2 ???,
                             victim_seating_position ???,
                             FOREIGN KEY(victim_id) REFERENCES Victims(victim_id))
+```
