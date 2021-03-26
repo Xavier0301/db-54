@@ -1,8 +1,8 @@
-# ROUGH SKETCH OF ER MODEL:
+# Rough sketch of the ER model
 
-|COLLISION| --- \<INVOLVES\> <-- |PARTY| --- \<ASSOCIATED WITH\> <-- |VICTIM|
+|**Collision**| --- \<*Involves*\> <-- |**Party**| --- \<*Associated with*\> <-- |**Victim**|
 
-# PARTICIPATION CONSTRAINTS:
+# Participation constraints
 
 - Partial participation from collision in the 'involves' relationship:
         case_id 10 has no involved party.
@@ -13,7 +13,7 @@
 - 'Exactly one' participation from victim in the 'associated with' relationship:
         Given a case_id, if there is a victim, there is a party (unique).
 
-# ATTRIBUTES CLUSTERING:
+# Attributes clustering
 
 I think clustering the attributes when it makes sense is a good idea:
 
@@ -24,7 +24,7 @@ to repeat or appear to be logically a separate entity
 We already did most of the clustering, the rest of the work is a matter on 
 aggregating ideas.
 
-# ADDITIONAL CONSTRAINTS:
+# Additional constraints
 
 - Key/participation constraints already covered. (Are those two different?)
 - No ISA relationship hence no covering/overlap constraint.
@@ -33,7 +33,7 @@ aggregating ideas.
 - Now, the other constraints we cannot express using ER model are important 
     to mention in the report.
 
-# SQL DDLs:
+# SQL commands
 
 TODO:
 - Review this shit.
