@@ -1,8 +1,11 @@
-# Rough sketch of the ER model
+# ER Model
 
+Replace the following piece of trash with your beautiful sketch:
 |**Collision**| --- \<*Involves*\> <-- |**Party**| --- \<*Associated with*\> <-- |**Victim**|
 
-# Participation constraints
+# Data constraints
+
+## Participation constraints
 
 - Partial participation from collision in the 'involves' relationship:
         case_id 10 has no involved party.
@@ -13,18 +16,7 @@
 - 'Exactly one' participation from victim in the 'associated with' relationship:
         Given a case_id, if there is a victim, there is a party (unique).
 
-# Attributes clustering
-
-I think clustering the attributes when it makes sense is a good idea:
-
-"Feel free to group some values/attributes into a separate entity/table if they seem 
-to repeat or appear to be logically a separate entity 
-(explain your assumptions over the data and design decision)."
-
-We already did most of the clustering, the rest of the work is a matter on 
-aggregating ideas.
-
-# Additional constraints
+## Additional constraints
 
 - Key/participation constraints already covered. (Are those two different?)
 - No ISA relationship hence no covering/overlap constraint.
@@ -33,7 +25,31 @@ aggregating ideas.
 - Now, the other constraints we cannot express using ER model are important 
     to mention in the report.
 
-# SQL commands
+For all separate entities 
+
+# Design choices
+
+## Star schema
+
+We decided to cluster attributes into separate entities following a star schema. Some groups are obvious, others are debatable.
+
+The obvious groups are:
+
+ * For the `Collision` entity, some attributes form the logical groups `Pcf`, `Location`, `Factor`, `Case`.
+ * Similarly, for the `Victim` entity, the only logical group is `Vehicle`.
+
+ We also decided to add two less obvious groups:
+ * For the `Party` entity, attributes which are orthogonal to the collision are not stored in a separate entity (age, sex, ...)
+
+    Attributes which are about the context of the collision are stored in a `PartyContext` entity.
+
+ * Similarly for the `Victim` entity, we have a `VictimContext` entity.
+
+## Attribute types in the SQL code
+
+ * 
+
+# SQL code
 
 TODO:
 - Review this shit.
@@ -45,6 +61,8 @@ Do we refine data types?
 - If we don't reduce enum what argument do we give VARCHAR()?
     A good upper-bound? The exact max length of an entry?
 
+## Collision
+
 ```SQL
 CREATE TABLE Collisions(case_id INTEGER, 
                         collision_date DATE,
@@ -53,10 +71,8 @@ CREATE TABLE Collisions(case_id INTEGER,
                         collision_severity VARCHAR(30),
                         hit_and_run VARCHAR(20),
                         tow_away BIT NOT NULL,                        
-                        PRIMARY KEY(case_id)) 
+                        PRIMARY KEY(case_id))
 ```
-
-Not sure about the CHAR(1) for violation subsection.
 
 ```SQL
 CREATE TABLE Pcfs(case_id INTEGER,
@@ -64,12 +80,16 @@ CREATE TABLE Pcfs(case_id INTEGER,
                     pcf_violation_category VARCHAR(30),
                     pcf_violation_subsection CHAR(1),
                     FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
+```
 
+```SQL
 CREATE TABLE Locations(case_id INTEGER,
                         population INTEGER,
                         county_city_location INTEGER,
                         FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
+```
 
+```SQL
 CREATE TABLE Factors(case_id INTEGER,
                         location_type VARCHAR(20),
                         lighting VARCHAR(20),
@@ -79,7 +99,9 @@ CREATE TABLE Factors(case_id INTEGER,
                         weather_1 VARCHAR(10),
                         weather_2 VARCHAR(10),
                         FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
+```
 
+```SQL
 CREATE TABLE Cases(case_id INTEGER,
                     process_date DATE,
                     officer_id INTEGER,
@@ -87,8 +109,10 @@ CREATE TABLE Cases(case_id INTEGER,
                     FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
-Only permanent attributes of a party are stored in the Parties table.
-Attributes from the context of the accident are stored in the PartyContexts table.
+## Party
+
+Only permanent attributes of a `Party` are stored in the `Parties` table.
+Attributes from the context of the collision are stored in the `PartyContexts` table.
 
 ```SQL
 CREATE TABLE Parties(id INTEGER,
@@ -99,7 +123,9 @@ CREATE TABLE Parties(id INTEGER,
                         party_sex ???,
                         PRIMARY KEY(id),
                         FOREIGN KEY(party_id) REFERENCES Parties(party_id))
+```
 
+```SQL
 CREATE TABLE PartyContexts(party_id INTEGER,
                         at_fault ???,
                         cellphone_use ???,
@@ -112,7 +138,9 @@ CREATE TABLE PartyContexts(party_id INTEGER,
                         party_safety_equipment_2 ???,
                         party_sobriety  ???,
                         FOREIGN KEY(party_id) REFERENCES Parties(party_id))
+```
 
+```SQL
 CREATE TABLE Vehicles(party_id INTEGER,
                         school_bus_related ???,
                         statewide_vehicle_type ???,
@@ -121,7 +149,9 @@ CREATE TABLE Vehicles(party_id INTEGER,
                         FOREIGN KEY(party_id) REFERENCES Parties(party_id))
 ```
 
-Again, all relevant context specific attributes of the victim are stored
+## Victim
+
+All collision context specific attributes of a `Victim` are stored
 in a separate table. 
 
 ```SQL
@@ -131,8 +161,10 @@ CREATE TABLE Victims(id INTEGER,
                         victim_age INTEGER,
                         victim_sex ???,
                         PRIMARY KEY(id),
-                        FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
+                        FOREIGN KEY(case_id) REFERENCES Collisions(case_id));
+```
 
+```SQL
 CREATE TABLE VictimContexts(victim_id INTEGER,
                             victim_degree_of_injury ???,
                             victim_ejected ???,
@@ -140,5 +172,5 @@ CREATE TABLE VictimContexts(victim_id INTEGER,
                             victim_safety_equipment_1 ???,
                             victim_safety_equipment_2 ???,
                             victim_seating_position ???,
-                            FOREIGN KEY(victim_id) REFERENCES Victims(victim_id))
+                            FOREIGN KEY(victim_id) REFERENCES Victims(victim_id));
 ```
