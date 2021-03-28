@@ -1,6 +1,7 @@
 # ER Model
 
-Replace the following piece of trash with your beautiful sketch:
+Consider replacing the following piece of trash with your beautiful sketch:
+
 |**Collision**| --- \<*Involves*\> <-- |**Party**| --- \<*Associated with*\> <-- |**Victim**|
 
 # Data constraints
@@ -24,8 +25,10 @@ Replace the following piece of trash with your beautiful sketch:
     (e.g. nullable)
 - Now, the other constraints we cannot express using ER model are important 
     to mention in the report.
+- In the project description, each attribute that is nullable is clearly stated: 
+    > Blank or - - Not Stated
 
-For all separate entities 
+    Hence we can mark as `NOT NULL` every other attribute, except for `PRIMARY KEY`s, which are implicitely so.
 
 # Design choices
 
@@ -47,7 +50,14 @@ The obvious groups are:
 
 ## Attribute types in the SQL code
 
- * 
+ * In the project description, some attributes are enums: they can only take on specific pre-defined values. 
+ Therefore, we can let them be `INTEGER` and have lookup tables when we dump the `.csv`s into a `SQL` database.
+ 
+    Note that these attributes are the same that are `nullable`.
+
+ * Similarly, `tow_away` from `Collisions` can be translated from a `float` (0.0 or 1.0) to a `BIT`.
+
+ * The rest of the attributes are clearly `INTEGER` from the project description as well as upon inspection of the values in the `.csv` files.
 
 # SQL code
 
@@ -161,7 +171,7 @@ CREATE TABLE Victims(id INTEGER,
                         victim_age INTEGER,
                         victim_sex ???,
                         PRIMARY KEY(id),
-                        FOREIGN KEY(case_id) REFERENCES Collisions(case_id));
+                        FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
 ```SQL
@@ -172,5 +182,5 @@ CREATE TABLE VictimContexts(victim_id INTEGER,
                             victim_safety_equipment_1 ???,
                             victim_safety_equipment_2 ???,
                             victim_seating_position ???,
-                            FOREIGN KEY(victim_id) REFERENCES Victims(victim_id));
+                            FOREIGN KEY(victim_id) REFERENCES Victims(victim_id))
 ```
