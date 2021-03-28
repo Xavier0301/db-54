@@ -51,7 +51,11 @@ The obvious groups are:
 ## Attribute types in the SQL code
 
  * In the project description, some attributes are enums: they can only take on specific pre-defined values. 
- Therefore, we can let them be `INTEGER` and have lookup tables when we dump the `.csv`s into a `SQL` database.
+ Therefore, we can let them be `INTEGER` and have lookup tables when we dump the `.csv`s into a `SQL` database. 
+ 
+    The alternative would be to let them be `VARCHAR`. The problem with this approach is that determining the max length means looking up the max number of characters for each attribute. 
+    
+    Granted: creating lookup tables would require the same amount of work; however it leads to  substantial data compression.
  
     Note that these attributes are the same that are `nullable`.
 
