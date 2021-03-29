@@ -16,13 +16,7 @@
         Given a case_id, if there is a victim, there is a party (unique).
 
 ## Additional constraints
-
-- Key/participation constraints already covered. (Are those two different?)
-- No ISA relationship hence no covering/overlap constraint.
-- We need to translate the key/participation constraints into SQL constraints. 
-    (e.g. nullable)
-- Now, the other constraints we cannot express using ER model are important 
-    to mention in the report.
+.
 - In the project description, each attribute that is nullable is clearly stated: 
     > Blank or - - Not Stated
 
@@ -62,13 +56,6 @@ The obvious groups are:
  * The rest of the attributes are clearly `INTEGER` from the project description as well as upon inspection of the values in the `.csv` files.
 
 # SQL code
-
-
-Do we refine data types?
-- For example, entries might be enums, hence we need only 1 character to encode them.
-    Do we reduce such entries like "not hit and run" into "A"?
-- If we don't reduce enum what argument do we give VARCHAR()?
-    A good upper-bound? The exact max length of an entry?
 
 ## Collision
 
@@ -131,7 +118,7 @@ CREATE TABLE Parties(id INTEGER,
                         party_age INTEGER NOT NULL,
                         party_sex CHAR(1),
                         PRIMARY KEY(id),
-                        FOREIGN KEY(party_id) REFERENCES Parties(party_id))
+                        FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
 ```SQL
@@ -146,7 +133,7 @@ CREATE TABLE PartyContexts(party_id INTEGER NOT NULL,
                         party_safety_equipment_1 CHAR(1),
                         party_safety_equipment_2 CHAR(1),
                         party_sobriety CHAR(1),
-                        FOREIGN KEY(party_id) REFERENCES Parties(party_id))
+                        FOREIGN KEY(party_id) REFERENCES Parties(id))
 ```
 
 ```SQL
@@ -155,7 +142,7 @@ CREATE TABLE Vehicles(party_id INTEGER NOT NULL,
                         statewide_vehicle_type CHAR(1),
                         vehicle_make VARCHAR(30) NOT NULL,
                         vehicle_year INTEGER NOT NULL,
-                        FOREIGN KEY(party_id) REFERENCES Parties(party_id))
+                        FOREIGN KEY(party_id) REFERENCES Parties(id))
 ```
 
 ## Victim
@@ -181,5 +168,5 @@ CREATE TABLE VictimContexts(victim_id INTEGER NOT NULL,
                             victim_safety_equipment_1 CHAR(1),
                             victim_safety_equipment_2 CHAR(1),
                             victim_seating_position CHAR(1),
-                            FOREIGN KEY(victim_id) REFERENCES Victims(victim_id))
+                            FOREIGN KEY(victim_id) REFERENCES Victims(id))
 ```
