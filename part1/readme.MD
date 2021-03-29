@@ -6,21 +6,22 @@
 
 ## Participation constraints
 
-- Partial participation from collision in the 'involves' relationship:
-        case_id 10 has no involved party.
-- 'Exactly one' participation from party in the 'involves' relationship:
-        Every party has an associated case_id that is unique.
-- Partial participation from party in the 'associated with' relationship:
-        Some case_id have no victim e.g. case_id 1,2.
-- 'Exactly one' participation from victim in the 'associated with' relationship:
-        Given a case_id, if there is a victim, there is a party (unique).
+- Partial participation from `Collision` in the `involved in` relationship:
+        `case_id` `10` has no involved party.
+- 'Exactly one' participation from `Party` in the `involved in` relationship:
+        Every party has an associated `case_id` that is unique.
+- Partial participation from `Party` in the 'associated with' relationship:
+        Some `case_id` have no victim e.g. `case_id` `1,2`.
+- 'Exactly one' participation from `Victim` in the `associated with` relationship:
+        Given a `case_id`, if there is a victim, there is a party (unique).
 
 ## Additional constraints
 .
-- In the project description, each attribute that is nullable is clearly stated: 
-    > Blank or - - Not Stated
+In the project description, each attribute that is nullable is clearly stated: 
 
-    Hence we can mark as `NOT NULL` every other attribute, except for `PRIMARY KEY`s, which are implicitely so.
+> Blank or - - Not Stated
+
+Hence we can mark as `NOT NULL` every other attribute, except for `PRIMARY KEY`s, which are implicitely so.
 
 # Design choices
 
@@ -51,7 +52,7 @@ The obvious groups are:
  
     Note that these attributes are the same that are `nullable`.
 
- * Similarly, `tow_away` from `Collisions` can be translated from a `float` (0.0 or 1.0) to a `BIT`.
+ * Similarly, `tow_away` from `Collisions` can be translated from a `float` (`0.0` or `1.0`) to a `BIT`.
 
  * The rest of the attributes are clearly `INTEGER` from the project description as well as upon inspection of the values in the `.csv` files.
 
