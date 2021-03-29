@@ -79,32 +79,32 @@ Do we refine data types?
 
 ```SQL
 CREATE TABLE Collisions(case_id INTEGER, 
-                        collision_date DATE,
-                        collision_time TIME,
+                        collision_date DATE NOT NULL,
+                        collision_time TIME NOT NULL,
                         type_of_collision CHAR(1),
-                        collision_severity CHAR(1),
-                        hit_and_run CHAR(1),
+                        collision_severity CHAR(1) NOT NULL,
+                        hit_and_run CHAR(1) NOT NULL,
                         tow_away BIT NOT NULL,                        
                         PRIMARY KEY(case_id))
 ```
 
 ```SQL
-CREATE TABLE Pcfs(case_id INTEGER,
-                    pcf_violation INTEGER,
+CREATE TABLE Pcfs(case_id INTEGER NOT NULL,
+                    pcf_violation INTEGER NOT NULL,
                     pcf_violation_category CHAR(1),
                     pcf_violation_subsection CHAR(1),
                     FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
 ```SQL
-CREATE TABLE Locations(case_id INTEGER,
+CREATE TABLE Locations(case_id INTEGER NOT NULL,
                         population INTEGER,
-                        county_city_location INTEGER,
+                        county_city_location INTEGER NOT NULL,
                         FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
 ```SQL
-CREATE TABLE Factors(case_id INTEGER,
+CREATE TABLE Factors(case_id INTEGER NOT NULL,
                         location_type CHAR(1),
                         lighting CHAR(1),
                         road_condition_1 CHAR(1),
@@ -116,10 +116,10 @@ CREATE TABLE Factors(case_id INTEGER,
 ```
 
 ```SQL
-CREATE TABLE Cases(case_id INTEGER,
-                    process_date DATE,
-                    officer_id INTEGER,
-                    jurisdiction INTEGER,
+CREATE TABLE Cases(case_id INTEGER NOT NULL,
+                    process_date DATE NOT NULL,
+                    officer_id INTEGER NOT NULL,
+                    jurisdiction INTEGER NOT NULL,
                     FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
@@ -130,18 +130,18 @@ Attributes from the context of the collision are stored in the `PartyContexts` t
 
 ```SQL
 CREATE TABLE Parties(id INTEGER,
-                        case_id INTEGER,
-                        party_number INTEGER,
+                        case_id INTEGER NOT NULL,
+                        party_number INTEGER NOT NULL,
                         finanicial_responsibility CHAR(1),
-                        party_age INTEGER,
+                        party_age INTEGER NOT NULL,
                         party_sex CHAR(1),
                         PRIMARY KEY(id),
                         FOREIGN KEY(party_id) REFERENCES Parties(party_id))
 ```
 
 ```SQL
-CREATE TABLE PartyContexts(party_id INTEGER,
-                        at_fault CHAR(1),
+CREATE TABLE PartyContexts(party_id INTEGER NOT NULL,
+                        at_fault CHAR(1) NOT NULL,
                         cellphone_use CHAR(1),
                         hazardous_materials CHAR(1),
                         movement_preceding_collision CHAR(1),
@@ -150,16 +150,16 @@ CREATE TABLE PartyContexts(party_id INTEGER,
                         party_drug_physical CHAR(1),
                         party_safety_equipment_1 CHAR(1),
                         party_safety_equipment_2 CHAR(1),
-                        party_sobriety  CHAR(1),
+                        party_sobriety CHAR(1),
                         FOREIGN KEY(party_id) REFERENCES Parties(party_id))
 ```
 
 ```SQL
-CREATE TABLE Vehicles(party_id INTEGER,
+CREATE TABLE Vehicles(party_id INTEGER NOT NULL,
                         school_bus_related CHAR(1),
                         statewide_vehicle_type CHAR(1),
-                        vehicle_make VARCHAR(30),
-                        vehicle_year INTEGER,
+                        vehicle_make VARCHAR(30) NOT NULL,
+                        vehicle_year INTEGER NOT NULL,
                         FOREIGN KEY(party_id) REFERENCES Parties(party_id))
 ```
 
@@ -170,19 +170,19 @@ in a separate table.
 
 ```SQL
 CREATE TABLE Victims(id INTEGER,
-                        case_id INTEGER,
-                        party_number INTEGER,
-                        victim_age INTEGER,
-                        victim_sex CHAR(1),
+                        case_id INTEGER NOT NULL,
+                        party_number INTEGER NOT NULL,
+                        victim_age INTEGER NOT NULL,
+                        victim_sex BIT,
                         PRIMARY KEY(id),
                         FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
 ```SQL
-CREATE TABLE VictimContexts(victim_id INTEGER,
-                            victim_degree_of_injury CHAR(1),
+CREATE TABLE VictimContexts(victim_id INTEGER NOT NULL,
+                            victim_degree_of_injury CHAR(1) NOT NULL,
                             victim_ejected CHAR(1),
-                            victim_role CHAR(1),
+                            victim_role CHAR(1) NOT NULL,
                             victim_safety_equipment_1 CHAR(1),
                             victim_safety_equipment_2 CHAR(1),
                             victim_seating_position CHAR(1),
