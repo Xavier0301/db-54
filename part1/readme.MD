@@ -65,9 +65,6 @@ The obvious groups are:
 
 # SQL code
 
-TODO:
-- Review this shit.
-- Add NOT NULL constraints.
 
 Do we refine data types?
 - For example, entries might be enums, hence we need only 1 character to encode them.
