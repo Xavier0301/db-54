@@ -81,9 +81,9 @@ Do we refine data types?
 CREATE TABLE Collisions(case_id INTEGER, 
                         collision_date DATE,
                         collision_time TIME,
-                        type_of_collision VARCHAR(15),
-                        collision_severity VARCHAR(30),
-                        hit_and_run VARCHAR(20),
+                        type_of_collision CHAR(1),
+                        collision_severity CHAR(1),
+                        hit_and_run CHAR(1),
                         tow_away BIT NOT NULL,                        
                         PRIMARY KEY(case_id))
 ```
@@ -91,7 +91,7 @@ CREATE TABLE Collisions(case_id INTEGER,
 ```SQL
 CREATE TABLE Pcfs(case_id INTEGER,
                     pcf_violation INTEGER,
-                    pcf_violation_category VARCHAR(30),
+                    pcf_violation_category CHAR(1),
                     pcf_violation_subsection CHAR(1),
                     FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
@@ -105,13 +105,13 @@ CREATE TABLE Locations(case_id INTEGER,
 
 ```SQL
 CREATE TABLE Factors(case_id INTEGER,
-                        location_type VARCHAR(20),
-                        lighting VARCHAR(20),
-                        road_condition_1 VARCHAR(30),
-                        road_condition_2 VARCHAR(30),
-                        road_surface VARCHAR(20),
-                        weather_1 VARCHAR(10),
-                        weather_2 VARCHAR(10),
+                        location_type CHAR(1),
+                        lighting CHAR(1),
+                        road_condition_1 CHAR(1),
+                        road_condition_2 CHAR(1),
+                        road_surface CHAR(1),
+                        weather_1 CHAR(1),
+                        weather_2 CHAR(1),
                         FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
@@ -132,34 +132,34 @@ Attributes from the context of the collision are stored in the `PartyContexts` t
 CREATE TABLE Parties(id INTEGER,
                         case_id INTEGER,
                         party_number INTEGER,
-                        finanicial_responsibility ???,
+                        finanicial_responsibility CHAR(1),
                         party_age INTEGER,
-                        party_sex ???,
+                        party_sex CHAR(1),
                         PRIMARY KEY(id),
                         FOREIGN KEY(party_id) REFERENCES Parties(party_id))
 ```
 
 ```SQL
 CREATE TABLE PartyContexts(party_id INTEGER,
-                        at_fault ???,
-                        cellphone_use ???,
-                        hazardous_materials ???,
-                        movement_preceding_collision ???,
-                        other_associate_factor_1 ???,
-                        other_associate_factor_2 ???,
-                        party_drug_physical ???,
-                        party_safety_equipment_1 ???,
-                        party_safety_equipment_2 ???,
-                        party_sobriety  ???,
+                        at_fault CHAR(1),
+                        cellphone_use CHAR(1),
+                        hazardous_materials CHAR(1),
+                        movement_preceding_collision CHAR(1),
+                        other_associate_factor_1 CHAR(1),
+                        other_associate_factor_2 CHAR(1),
+                        party_drug_physical CHAR(1),
+                        party_safety_equipment_1 CHAR(1),
+                        party_safety_equipment_2 CHAR(1),
+                        party_sobriety  CHAR(1),
                         FOREIGN KEY(party_id) REFERENCES Parties(party_id))
 ```
 
 ```SQL
 CREATE TABLE Vehicles(party_id INTEGER,
-                        school_bus_related ???,
-                        statewide_vehicle_type ???,
-                        vehicle_make ???,
-                        vehicle_year ???,
+                        school_bus_related CHAR(1),
+                        statewide_vehicle_type CHAR(1),
+                        vehicle_make VARCHAR(30),
+                        vehicle_year INTEGER,
                         FOREIGN KEY(party_id) REFERENCES Parties(party_id))
 ```
 
@@ -173,18 +173,18 @@ CREATE TABLE Victims(id INTEGER,
                         case_id INTEGER,
                         party_number INTEGER,
                         victim_age INTEGER,
-                        victim_sex ???,
+                        victim_sex CHAR(1),
                         PRIMARY KEY(id),
                         FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
 ```SQL
 CREATE TABLE VictimContexts(victim_id INTEGER,
-                            victim_degree_of_injury ???,
-                            victim_ejected ???,
-                            victim_role ???,
-                            victim_safety_equipment_1 ???,
-                            victim_safety_equipment_2 ???,
-                            victim_seating_position ???,
+                            victim_degree_of_injury CHAR(1),
+                            victim_ejected CHAR(1),
+                            victim_role CHAR(1),
+                            victim_safety_equipment_1 CHAR(1),
+                            victim_safety_equipment_2 CHAR(1),
+                            victim_seating_position CHAR(1),
                             FOREIGN KEY(victim_id) REFERENCES Victims(victim_id))
 ```
