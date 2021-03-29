@@ -16,12 +16,13 @@
         Given a `case_id`, if there is a victim, there is a party (unique).
 
 ## Additional constraints
-.
-In the project description, each attribute that is nullable is clearly stated: 
 
-> Blank or - - Not Stated
+ * In the project description, each attribute that is nullable is clearly stated: 
 
-Hence we can mark as `NOT NULL` every other attribute, except for `PRIMARY KEY`s, which are implicitely so.
+        > Blank or - - Not Stated
+   Hence we can mark as `NOT NULL` every other attribute, except for `PRIMARY KEY`s, which are implicitely so.
+ * Since we are using a star schema, we cannot express the following constraints in the SQL code: every collision has a location, a factor, a pcf and a case. Likewise, every party has a vehicle and a party context. Finally, every victim has a victim context. 
+ * As said in the moodle forum, a victim is not a party.
 
 # Design choices
 
