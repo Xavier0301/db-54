@@ -1,6 +1,6 @@
 # ER Model
 
-![551b5153-66cd-4e8c-8910-6fc78558e6b5](https://user-images.githubusercontent.com/35627867/112846274-27b3d580-90a6-11eb-8029-fe0aa248594e.jpg)
+[database.pdf](https://github.com/Xavier0301/db-54/files/6224044/database.pdf)
 
 # Data constraints
 
