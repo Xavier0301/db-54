@@ -123,62 +123,62 @@ CREATE TABLE Cases(case_id INTEGER NOT NULL,
 ### Satelite Enum Tables
 
 ```SQL
-CREATE TABLE CollisionSeverity(id INTEGER,
+CREATE TABLE CollisionSeverity(id INTEGER AUTO_INCREMENT,
 			       description VARCHAR(25) NOT NULL UNIQUE,
 			       PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE HitAndRun(id INTEGER,
+CREATE TABLE HitAndRun(id INTEGER AUTO_INCREMENT,
 			description VARCHAR(20) NOT NULL UNIQUE,
 			PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE Lighting(id INTEGER,
+CREATE TABLE Lighting(id INTEGER AUTO_INCREMENT,
 		       description VARCHAR(35) NOT NULL UNIQUE,
 		       PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE LocationType(id INTEGER,
+CREATE TABLE LocationType(id INTEGER AUTO_INCREMENT,
 			   desc VARCHAR(20) NOT NULL UNIQUE,
 			   PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE PcfViolationCategory(id INTEGER,
+CREATE TABLE PcfViolationCategory(id INTEGER AUTO_INCREMENT,
 				   description VARCHAR(70) NOT NULL UNIQUE,
 				   PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE PrimaryCollisionFactor(id INTEGER,
+CREATE TABLE PrimaryCollisionFactor(id INTEGER AUTO_INCREMENT,
 				     description VARCHAR(25) NOT NULL UNIQUE,
 				     PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE RoadCondition(id INTEGER,
+CREATE TABLE RoadCondition(id INTEGER AUTO_INCREMENT,
 			    description VARCHAR(20) NOT NULL UNIQUE,
 			    PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE RoadSurface(id INTEGER,
+CREATE TABLE RoadSurface(id INTEGER AUTO_INCREMENT,
 			  description VARCHAR(15) NOT NULL UNIQUE,
 			  PRIMARY KEY(id))
 ```
 
 
 ```SQL
-CREATE TABLE TypeOfCollision(id INTEGER,
+CREATE TABLE TypeOfCollision(id INTEGER AUTO_INCREMENT,
 			      description VARCHAR(15) NOT NULL UNIQUE,
 			      PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE Weather(id INTEGER,
+CREATE TABLE Weather(id INTEGER AUTO_INCREMENT,
 		      desc VARCHAR(10) NOT NULL UNIQUE,
 		      PRIMARY KEY(id))
 ```
@@ -232,41 +232,41 @@ CREATE TABLE Vehicles(party_id INTEGER NOT NULL,
 ### Satelite Enum Tables
 
 ```SQL
-CREATE TABLE CellphoneUse(id INTEGER,
+CREATE TABLE CellphoneUse(id INTEGER AUTO_INCREMENT,
 			   description CHAR(1) NOT NULL UNIQUE,
                 CHECK (description BETWEEN 'B' AND 'D'),	
 			   PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE FinancialResponsability(id INTEGER,
+CREATE TABLE FinancialResponsability(id INTEGER AUTO_INCREMENT,
 			   	      description CHAR(1) NOT NULL UNIQUE,
                                       CHECK (description IN ('N', 'Y', 'O', 'E', '-')),	
 			              PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE MovementPrecedingCollision(id INTEGER,
+CREATE TABLE MovementPrecedingCollision(id INTEGER AUTO_INCREMENT,
 					 description VARCHAR(100) NOT NULL UNIQUE,
 					 PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE OtherAssociatedFactors (id INTEGER,
+CREATE TABLE OtherAssociatedFactors (id INTEGER AUTO_INCREMENT,
     description CHAR(1) NOT NULL UNIQUE,
     CHECK (description BETWEEN 'A' AND 'Z'),
     PRIMARY KEY(id))				     
 ```
 
 ```SQL
-CREATE TABLE PartyDrugPhysical(id INTEGER,
+CREATE TABLE PartyDrugPhysical(id INTEGER AUTO_INCREMENT,
 			       description CHAR(1) NOT NULL UNIQUE,
                             CHECK (description IN ('E', 'F', 'H', 'I')),
 			       PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE PartySafetyEquipement(id INTEGER,
+CREATE TABLE PartySafetyEquipement(id INTEGER AUTO_INCREMENT,
 				   description CHAR(1) NOT NULL UNIQUE,
                                    CHECK (description BETWEEN 'A' AND 'Y'),
 				   PRIMARY KEY(id))
@@ -274,34 +274,34 @@ CREATE TABLE PartySafetyEquipement(id INTEGER,
 
 The following can store `victim_sex` and `party_sex`
 ```SQL 
-CREATE TABLE PersonSex(id INTEGER,
+CREATE TABLE PersonSex(id INTEGER AUTO_INCREMENT,
 		       description VARCHAR(6) NOT NULL UNIQUE,
                        CHECK (description in ('male', 'female')),
 		       PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE PartySobriety(id INTEGER,
+CREATE TABLE PartySobriety(id INTEGER AUTO_INCREMENT,
 			    desc CHAR(1) NOT NULL UNIQUE,
                             CONSTRAINT sobriety_check CHECK (desc IN ('A', 'B', 'C', 'D', 'G', 'H', '-')),
 			    PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE PartyType(id INTEGER,
+CREATE TABLE PartyType(id INTEGER AUTO_INCREMENT,
 			description VARCHAR(15) NOT NULL UNIQUE,
 			PRIMARY KEY(id))
 ```
 
 
 ```SQL
-CREATE TABLE StatewideVehiculeType(id INTEGER,
+CREATE TABLE StatewideVehiculeType(id INTEGER AUTO_INCREMENT,
 				    description VARCHAR(30) NOT NULL UNIQUE,
 				    PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE VehiculeMake(id INTEGER,
+CREATE TABLE VehiculeMake(id INTEGER AUTO_INCREMENT,
 			   description VARCHAR(100) NOT NULL,
 			   PRIMARY KEY(id))
 ```
@@ -333,14 +333,14 @@ CREATE TABLE Victims(id INTEGER,
 ### Satelite Enum Tables
 
 ```SQL
-CREATE TABLE VictimSafetyEquipment(id INTEGER,
+CREATE TABLE VictimSafetyEquipment(id INTEGER AUTO_INCREMENT,
 				   description CHAR(1) NOT NULL UNIQUE,
                                    CHECK(description BETWEEN 'A' AND 'Z'),
 				   PRIMARY KEY(id))
 ```
 
 ```SQL
-CREATE TABLE VictimDegreeOfInjury(id INTEGER,
+CREATE TABLE VictimDegreeOfInjury(id INTEGER AUTO_INCREMENT,
 				   description VARCHAR(30) NOT NULL UNIQUE,
 				   PRIMARY KEY(id))
 ```
@@ -348,7 +348,7 @@ CREATE TABLE VictimDegreeOfInjury(id INTEGER,
 The following can store `victim_sex` and `party_sex`.
 
 ```SQL 
-CREATE TABLE PersonSex(id INTEGER,
+CREATE TABLE PersonSex(id INTEGER AUTO_INCREMENT,
 		       description VARCHAR(6) NOT NULL UNIQUE,
                        CHECK (description in ('male', 'female')),
 		       PRIMARY KEY(id))
