@@ -61,22 +61,28 @@ The obvious groups are:
 
 ## Collision
 
+### Main Tables
+
 ```SQL
 CREATE TABLE Collisions(case_id INTEGER, 
                         collision_date DATE NOT NULL,
                         collision_time TIME NOT NULL,
-                        type_of_collision CHAR(1),
+                        type_of_collision INTEGER,
                         collision_severity CHAR(1) NOT NULL,
-                        hit_and_run CHAR(1) NOT NULL,
-                        tow_away BIT NOT NULL,                        
+                        hit_and_run INTEGER NOT NULL,
+                        tow_away BIT NOT NULL,
+                        FOREIGN KEY(type_of_collision) REFERENCES TypeOfCollision(id), 
+                        FOREIGN KEY(collision_severity) REFERENCES CollisionSeverity(id), 
+                        FOREIGN KEY(hit_and_run) REFERENCES HitAndRun(id),                      
                         PRIMARY KEY(case_id))
 ```
 
 ```SQL
 CREATE TABLE Pcfs(case_id INTEGER NOT NULL,
                     pcf_violation INTEGER NOT NULL,
-                    pcf_violation_category CHAR(1),
+                    pcf_violation_category INTEGER,
                     pcf_violation_subsection CHAR(1),
+                    FOREIGN KEY(pcf_violation_category) REFERENCES PcfViolationCategory(id),
                     FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
@@ -89,13 +95,20 @@ CREATE TABLE Locations(case_id INTEGER NOT NULL,
 
 ```SQL
 CREATE TABLE Factors(case_id INTEGER NOT NULL,
-                        location_type CHAR(1),
-                        lighting CHAR(1),
-                        road_condition_1 CHAR(1),
-                        road_condition_2 CHAR(1),
-                        road_surface CHAR(1),
-                        weather_1 CHAR(1),
-                        weather_2 CHAR(1),
+                        location_type INTEGER,
+                        lighting INTEGER,
+                        road_condition_1 INTEGER,
+                        road_condition_2 INTEGER,
+                        road_surface INTEGER,
+                        weather_1 INTEGER,
+                        weather_2 INTEGER,
+                        FOREIGN KEY(location_type) REFERENCES LocationType(id),
+                        FOREIGN KEY(lighting) REFERENCES Lighting(id),
+                        FOREIGN KEY(road_condition_1) REFERENCES RoadCondition(id),
+                        FOREIGN KEY(road_condition_2) REFERENCES RoadCondition(id),
+                        FOREIGN KEY(road_surface) REFERENCES RoadSurface(id),
+                        FOREIGN KEY(weather_1) REFERENCES Weather(id),
+                        FOREIGN KEY(weather_2) REFERENCES Weather(id),
                         FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
@@ -107,68 +120,229 @@ CREATE TABLE Cases(case_id INTEGER NOT NULL,
                     FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
+### Satelite Enum Tables
+
+```SQL
+CREATE TABLE CollisionSeverity(id INTEGER,
+			       description VARCHAR(25) NOT NULL UNIQUE,
+			       PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE HitAndRun(id INTEGER,
+			description VARCHAR(20) NOT NULL UNIQUE,
+			PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE Lighting(id INTEGER,
+		       description VARCHAR(35) NOT NULL UNIQUE,
+		       PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE LocationType(id INTEGER,
+			   desc VARCHAR(20) NOT NULL UNIQUE,
+			   PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE PcfViolationCategory(id INTEGER,
+				   description VARCHAR(70) NOT NULL UNIQUE,
+				   PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE PrimaryCollisionFactor(id INTEGER,
+				     description VARCHAR(25) NOT NULL UNIQUE,
+				     PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE RoadCondition(id INTEGER,
+			    description VARCHAR(20) NOT NULL UNIQUE,
+			    PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE RoadSurface(id INTEGER,
+			  description VARCHAR(15) NOT NULL UNIQUE,
+			  PRIMARY KEY(id))
+```
+
+
+```SQL
+CREATE TABLE TypeOfCollision(id INTEGER,
+			      description VARCHAR(15) NOT NULL UNIQUE,
+			      PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE Weather(id INTEGER,
+		      desc VARCHAR(10) NOT NULL UNIQUE,
+		      PRIMARY KEY(id))
+```
+
 ## Party
 
-Only permanent attributes of a `Party` are stored in the `Parties` table.
-Attributes from the context of the collision are stored in the `PartyContexts` table.
+### Main Tables
 
 ```SQL
 CREATE TABLE Parties(id INTEGER,
                         case_id INTEGER NOT NULL,
                         party_number INTEGER NOT NULL,
-                        finanicial_responsibility CHAR(1),
+                        finanicial_responsibility INTEGER,
                         party_age INTEGER NOT NULL,
-                        party_sex CHAR(1),
+                        party_sex INTEGER,
+                        at_fault BIT NOT NULL,
+                        cellphone_use INTEGER,
+                        hazardous_materials CHAR(1),
+                        movement_preceding_collision INTEGER,
+                        other_associate_factor_1 INTEGER,
+                        other_associate_factor_2 INTEGER,
+                        party_drug_physical INTEGER,
+                        party_safety_equipment_1 INTEGER,
+                        party_safety_equipment_2 INTEGER,
+                        party_sobriety CHAR(1),
                         PRIMARY KEY(id),
+                        FOREIGN KEY(finanicial_responsibility) REFERENCES FinancialResponsability(id),
+                        FOREIGN KEY(party_sex) REFERENCES PartySex(id),
+                        FOREIGN KEY(cellphone_use) REFERENCES CellphoneUse(id),
+                        FOREIGN KEY(movement_preceding_collision) REFERENCES MovementPrecedingCollision(id),
+                        FOREIGN KEY(other_associate_factor_1) REFERENCES OtherAssociatedFactors(id),
+                        FOREIGN KEY(other_associate_factor_2) REFERENCES OtherAssociatedFactors(id),
+                        FOREIGN KEY(party_drug_physical) REFERENCES PartyDrugPhysical(id),
+                        FOREIGN KEY(party_safety_equipement_1) REFERENCES PartySafetyEquipement(id),
+                        FOREIGN KEY(party_safety_equipement_2) REFERENCES PartySafetyEquipement(id),
+                        FOREIGN KEY(party_sobriety) REFERENCES PartySobriety(id),
                         FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
-```SQL
-CREATE TABLE PartyContexts(party_id INTEGER NOT NULL,
-                        at_fault CHAR(1) NOT NULL,
-                        cellphone_use CHAR(1),
-                        hazardous_materials CHAR(1),
-                        movement_preceding_collision CHAR(1),
-                        other_associate_factor_1 CHAR(1),
-                        other_associate_factor_2 CHAR(1),
-                        party_drug_physical CHAR(1),
-                        party_safety_equipment_1 CHAR(1),
-                        party_safety_equipment_2 CHAR(1),
-                        party_sobriety CHAR(1),
-                        FOREIGN KEY(party_id) REFERENCES Parties(id))
-```
+
 
 ```SQL
 CREATE TABLE Vehicles(party_id INTEGER NOT NULL,
-                        school_bus_related CHAR(1),
-                        statewide_vehicle_type CHAR(1),
-                        vehicle_make VARCHAR(30) NOT NULL,
+                        school_bus_related BIT,
+                        statewide_vehicle_type INTEGER,
+                        vehicle_make INTEGER NOT NULL,
                         vehicle_year INTEGER NOT NULL,
+                        FOREIGN KEY(statewide_vehicle_type) REFERENCES StatewideVehiculeType(id),
+                        FOREIGN KEY(vehicule_make) REFERENCES VehiculeMake(id),
                         FOREIGN KEY(party_id) REFERENCES Parties(id))
+```
+
+### Satelite Enum Tables
+
+```SQL
+CREATE TABLE CellphoneUse(id INTEGER,
+			   description CHAR(1) NOT NULL UNIQUE,
+                CHECK (description BETWEEN 'B' AND 'D'),	
+			   PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE FinancialResponsability(id INTEGER,
+			   	      description CHAR(1) NOT NULL UNIQUE,
+                                      CHECK (description IN ('N', 'Y', 'O', 'E', '-')),	
+			              PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE MovementPrecedingCollision(id INTEGER,
+					 description VARCHAR(100) NOT NULL UNIQUE,
+					 PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE OtherAssociatedFactors (id INTEGER,
+    description CHAR(1) NOT NULL UNIQUE,
+    CHECK (description BETWEEN 'A' AND 'Z'),
+    PRIMARY KEY(id))				     
+```
+
+```SQL
+CREATE TABLE PartyDrugPhysical(id INTEGER,
+			       description CHAR(1) NOT NULL UNIQUE,
+                            CHECK (description IN ('E', 'F', 'H', 'I')),
+			       PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE PartySafetyEquipement(id INTEGER,
+				   description CHAR(1) NOT NULL UNIQUE,
+                                   CHECK (description BETWEEN 'A' AND 'Y'),
+				   PRIMARY KEY(id))
+```
+
+The following can store `victim_sex` and `party_sex`
+```SQL 
+CREATE TABLE PersonSex(id INTEGER,
+		       description VARCHAR(6) NOT NULL UNIQUE,
+                       CHECK (description in ('male', 'female')),
+		       PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE PartySobriety(id INTEGER,
+			    desc CHAR(1) NOT NULL UNIQUE,
+                            CONSTRAINT sobriety_check CHECK (desc IN ('A', 'B', 'C', 'D', 'G', 'H', '-')),
+			    PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE PartyType(id INTEGER,
+			description VARCHAR(15) NOT NULL UNIQUE,
+			PRIMARY KEY(id))
+```
+
+
+```SQL
+CREATE TABLE StatewideVehiculeType(id INTEGER,
+				    description VARCHAR(30) NOT NULL UNIQUE,
+				    PRIMARY KEY(id))
+```
+
+```SQL
+CREATE TABLE VehiculeMake(id INTEGER,
+			   description VARCHAR(100) NOT NULL,
+			   PRIMARY KEY(id))
 ```
 
 ## Victim
 
-All collision context specific attributes of a `Victim` are stored
-in a separate table. 
+### Main Table
 
 ```SQL
 CREATE TABLE Victims(id INTEGER,
                         case_id INTEGER NOT NULL,
                         party_number INTEGER NOT NULL,
                         victim_age INTEGER NOT NULL,
-                        victim_sex BIT,
+                        victim_sex INTEGER,
+                        victim_degree_of_injury INTEGER NOT NULL,
+                        victim_ejected INTEGER,
+                        victim_role INTEGER NOT NULL,
+                        victim_safety_equipment_1 CHAR(1),
+                        victim_safety_equipment_2 CHAR(1),
+                        victim_seating_position CHAR(1),
                         PRIMARY KEY(id),
+                        FOREIGN KEY(victim_sex) REFERENCES VictimSex(id),
+                        FOREIGN KEY(victim_degree_of_injury) REFERENCES VictimDegreeOfInjury(id),
                         FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
+### Satelite Enum Tables
+
 ```SQL
-CREATE TABLE VictimContexts(victim_id INTEGER NOT NULL,
-                            victim_degree_of_injury CHAR(1) NOT NULL,
-                            victim_ejected CHAR(1),
-                            victim_role CHAR(1) NOT NULL,
-                            victim_safety_equipment_1 CHAR(1),
-                            victim_safety_equipment_2 CHAR(1),
-                            victim_seating_position CHAR(1),
-                            FOREIGN KEY(victim_id) REFERENCES Victims(id))
+CREATE TABLE VictimDegreeOfInjury(id INTEGER,
+				   desc VARCHAR(30) NOT NULL UNIQUE,
+				   PRIMARY KEY(id))
+```
+
+The following can store `victim_sex` and `party_sex`.
+
+```SQL 
+CREATE TABLE PersonSex(id INTEGER,
+		       description VARCHAR(6) NOT NULL UNIQUE,
+                       CHECK (description in ('male', 'female')),
+		       PRIMARY KEY(id))
 ```
