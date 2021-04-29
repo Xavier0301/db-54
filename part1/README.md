@@ -66,11 +66,11 @@ The obvious groups are:
 ```SQL
 CREATE TABLE Collisions(case_id INTEGER, 
                         collision_date DATE NOT NULL,
-                        collision_time TIME NOT NULL,
+                        collision_time TIME,
                         type_of_collision INTEGER,
-                        collision_severity CHAR(1) NOT NULL,
+                        collision_severity INTEGER NOT NULL,
                         hit_and_run INTEGER NOT NULL,
-                        tow_away BIT NOT NULL,
+                        tow_away BIT,
                         FOREIGN KEY(type_of_collision) REFERENCES TypeOfCollision(id), 
                         FOREIGN KEY(collision_severity) REFERENCES CollisionSeverity(id), 
                         FOREIGN KEY(hit_and_run) REFERENCES HitAndRun(id),                      
@@ -79,7 +79,7 @@ CREATE TABLE Collisions(case_id INTEGER,
 
 ```SQL
 CREATE TABLE Pcfs(case_id INTEGER NOT NULL,
-                    pcf_violation INTEGER NOT NULL,
+                    pcf_violation INTEGER,
                     pcf_violation_category INTEGER,
                     pcf_violation_subsection CHAR(1),
                     FOREIGN KEY(pcf_violation_category) REFERENCES PcfViolationCategory(id),
@@ -115,8 +115,8 @@ CREATE TABLE Factors(case_id INTEGER NOT NULL,
 ```SQL
 CREATE TABLE Cases(case_id INTEGER NOT NULL,
                     process_date DATE NOT NULL,
-                    officer_id INTEGER NOT NULL,
-                    jurisdiction INTEGER NOT NULL,
+                    officer_id VARCHAR(8),
+                    jurisdiction INTEGER,
                     FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
@@ -192,7 +192,7 @@ CREATE TABLE Parties(id INTEGER,
                         case_id INTEGER NOT NULL,
                         party_number INTEGER NOT NULL,
                         finanicial_responsibility INTEGER,
-                        party_age INTEGER NOT NULL,
+                        party_age INTEGER,
                         party_sex INTEGER,
                         at_fault BIT NOT NULL,
                         cellphone_use INTEGER,
@@ -203,31 +203,29 @@ CREATE TABLE Parties(id INTEGER,
                         party_drug_physical INTEGER,
                         party_safety_equipment_1 INTEGER,
                         party_safety_equipment_2 INTEGER,
-                        party_sobriety CHAR(1),
+                        party_sobriety INTEGER,
                         PRIMARY KEY(id),
                         FOREIGN KEY(finanicial_responsibility) REFERENCES FinancialResponsability(id),
-                        FOREIGN KEY(party_sex) REFERENCES PartySex(id),
+                        FOREIGN KEY(party_sex) REFERENCES PersonSex(id),
                         FOREIGN KEY(cellphone_use) REFERENCES CellphoneUse(id),
                         FOREIGN KEY(movement_preceding_collision) REFERENCES MovementPrecedingCollision(id),
                         FOREIGN KEY(other_associate_factor_1) REFERENCES OtherAssociatedFactors(id),
                         FOREIGN KEY(other_associate_factor_2) REFERENCES OtherAssociatedFactors(id),
                         FOREIGN KEY(party_drug_physical) REFERENCES PartyDrugPhysical(id),
-                        FOREIGN KEY(party_safety_equipement_1) REFERENCES PartySafetyEquipement(id),
-                        FOREIGN KEY(party_safety_equipement_2) REFERENCES PartySafetyEquipement(id),
+                        FOREIGN KEY(party_safety_equipment_1) REFERENCES PartySafetyEquipement(id),
+                        FOREIGN KEY(party_safety_equipment_2) REFERENCES PartySafetyEquipement(id),
                         FOREIGN KEY(party_sobriety) REFERENCES PartySobriety(id),
                         FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
-
-
 
 ```SQL
 CREATE TABLE Vehicles(party_id INTEGER NOT NULL,
                         school_bus_related BIT,
                         statewide_vehicle_type INTEGER,
-                        vehicle_make INTEGER NOT NULL,
-                        vehicle_year INTEGER NOT NULL,
+                        vehicle_make INTEGER,
+                        vehicle_year INTEGER,
                         FOREIGN KEY(statewide_vehicle_type) REFERENCES StatewideVehiculeType(id),
-                        FOREIGN KEY(vehicule_make) REFERENCES VehiculeMake(id),
+                        FOREIGN KEY(vehicle_make) REFERENCES VehiculeMake(id),
                         FOREIGN KEY(party_id) REFERENCES Parties(id))
 ```
 
@@ -316,16 +314,18 @@ CREATE TABLE VehiculeMake(id INTEGER,
 CREATE TABLE Victims(id INTEGER,
                         case_id INTEGER NOT NULL,
                         party_number INTEGER NOT NULL,
-                        victim_age INTEGER NOT NULL,
+                        victim_age INTEGER,
                         victim_sex INTEGER,
-                        victim_degree_of_injury INTEGER NOT NULL,
+                        victim_degree_of_injury INTEGER,
                         victim_ejected INTEGER,
                         victim_role INTEGER NOT NULL,
-                        victim_safety_equipment_1 CHAR(1),
-                        victim_safety_equipment_2 CHAR(1),
-                        victim_seating_position CHAR(1),
+                        victim_safety_equipment_1 INTEGER,
+                        victim_safety_equipment_2 INTEGER,
+                        victim_seating_position INTEGER,
                         PRIMARY KEY(id),
-                        FOREIGN KEY(victim_sex) REFERENCES VictimSex(id),
+                        FOREIGN KEY(victim_sex) REFERENCES PersonSex(id),
+                        FOREIGN KEY(victim_safety_equipment_1) REFERENCES VictimSafetyEquipment(id),
+                        FOREIGN KEY(victim_safety_equipment_2) REFERENCES VictimSafetyEquipment(id),
                         FOREIGN KEY(victim_degree_of_injury) REFERENCES VictimDegreeOfInjury(id),
                         FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
@@ -333,8 +333,15 @@ CREATE TABLE Victims(id INTEGER,
 ### Satelite Enum Tables
 
 ```SQL
+CREATE TABLE VictimSafetyEquipment(id INTEGER,
+				   description CHAR(1) NOT NULL UNIQUE,
+                                   CHECK(description BETWEEN 'A' AND 'Z'),
+				   PRIMARY KEY(id))
+```
+
+```SQL
 CREATE TABLE VictimDegreeOfInjury(id INTEGER,
-				   desc VARCHAR(30) NOT NULL UNIQUE,
+				   description VARCHAR(30) NOT NULL UNIQUE,
 				   PRIMARY KEY(id))
 ```
 
