@@ -241,7 +241,7 @@ CREATE TABLE CellphoneUse(id INTEGER AUTO_INCREMENT,
 ```SQL
 CREATE TABLE FinancialResponsibility(id INTEGER AUTO_INCREMENT,
 			   	      description CHAR(1) NOT NULL UNIQUE,
-                                      CHECK (description IN ('N', 'Y', 'O', 'E', '-')),	
+                                      CHECK (description IN ('N', 'Y', 'O', 'E')),	
 			              PRIMARY KEY(id))
 ```
 
