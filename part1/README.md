@@ -353,3 +353,29 @@ CREATE TABLE PersonSex(id INTEGER AUTO_INCREMENT,
                        CHECK (description in ('male', 'female')),
 		       PRIMARY KEY(id))
 ```
+
+# Data cleaning choices
+
+## Collisions
+
+* `Collisions` has three columns with dirty values. 
+
+* The columns are  `hit_and_run`, `pcf_violation_category` and `road_surface`. The corresponding values are `D`, `21804` and `H`.
+
+* The above anomalies each occur once in the table.
+
+* Droping a collision means dropping the associated parties and victims. In our case, we dropped 1 victim and 2 parties. 
+
+* Surprisingly, it was a single row combining the above three anomalies. The corresponding `case_id` was `2816618`.
+
+## Parties 
+
+* `Parties` has two columns with dirty values. 
+
+* In `party_drug_physical` there is an undefined `G` which is converted into a `NULL` in the table. Even if this value is the most prevalant in the table, we decided to replace with `NULL` as we cannot interpret it.
+
+* In `cellphone_use`, undefined values `1`, `2` and `3` are converted into `B`, `C` and `D` respectively. We made this choice because of similar frequency as well as similar order.
+
+## Victims
+
+* In the table `Victims`, `victim_degree_of_injury` has an undefined `7` which is replaced by `NULL`. This occurs once throughout the table.
