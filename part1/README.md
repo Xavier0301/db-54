@@ -239,7 +239,7 @@ CREATE TABLE CellphoneUse(id INTEGER AUTO_INCREMENT,
 ```
 
 ```SQL
-CREATE TABLE FinancialResponsability(id INTEGER AUTO_INCREMENT,
+CREATE TABLE FinancialResponsibility(id INTEGER AUTO_INCREMENT,
 			   	      description CHAR(1) NOT NULL UNIQUE,
                                       CHECK (description IN ('N', 'Y', 'O', 'E', '-')),	
 			              PRIMARY KEY(id))
@@ -283,26 +283,26 @@ CREATE TABLE PersonSex(id INTEGER AUTO_INCREMENT,
 ```SQL
 CREATE TABLE PartySobriety(id INTEGER AUTO_INCREMENT,
 			    desc CHAR(1) NOT NULL UNIQUE,
-                            CONSTRAINT sobriety_check CHECK (desc IN ('A', 'B', 'C', 'D', 'G', 'H', '-')),
+                            CONSTRAINT sobriety_check CHECK (desc IN ('A', 'B', 'C', 'D', 'G', 'H')),
 			    PRIMARY KEY(id))
 ```
 
 ```SQL
 CREATE TABLE PartyType(id INTEGER AUTO_INCREMENT,
-			description VARCHAR(15) NOT NULL UNIQUE,
+			description VARCHAR(14) NOT NULL UNIQUE,
 			PRIMARY KEY(id))
 ```
 
 
 ```SQL
 CREATE TABLE StatewideVehiculeType(id INTEGER AUTO_INCREMENT,
-				    description VARCHAR(30) NOT NULL UNIQUE,
+				    description VARCHAR(35) NOT NULL UNIQUE,
 				    PRIMARY KEY(id))
 ```
 
 ```SQL
 CREATE TABLE VehiculeMake(id INTEGER AUTO_INCREMENT,
-			   description VARCHAR(100) NOT NULL,
+			   description VARCHAR(28) NOT NULL,
 			   PRIMARY KEY(id))
 ```
 
