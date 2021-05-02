@@ -70,10 +70,8 @@ WHERE P.at_fault = 1 AND P.financial_responsibility = ‘Y’ AND
 
 ### 8th Query
 ```SQL
-SELECT
-  *
-FROM
-  (
+SELECT *
+FROM (
     SELECT
       V.victim_age AS age,
       COUNT(*) AS total,
@@ -83,10 +81,7 @@ FROM
     ORDER BY
       age DESC
   )
-  JOIN (
-    SELECT
-      @RankRow: = total / 2
-  )
+  JOIN (SELECT @RankRow: = total / 2)
 
 SELECT
   victim_seating_position
