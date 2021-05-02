@@ -77,7 +77,7 @@ FROM Victims V
 SELECT
   victim_seating_position
 FROM
-  VICTIMS
+  Victims
 GROUP BY
   victim_seating_position
 ORDER BY
