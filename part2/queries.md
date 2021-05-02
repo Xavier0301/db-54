@@ -74,10 +74,16 @@ WHERE P.at_fault = 1 AND P.financial_responsibility = ‘Y’ AND
 SELECT AVG(V.victim_age)
 FROM VICTIMS V
 
-SELECT TOP 1 victim_seating_position
-FROM VICTIMS
-GROUP BY victim_seating_position
-ORDER BY COUNT(*) DESC
+SELECT
+  victim_seating_position
+FROM
+  VICTIMS
+GROUP BY
+  victim_seating_position
+ORDER BY
+  COUNT(*) DESC
+limit
+  1
 ```
 
 ### 9th Query
