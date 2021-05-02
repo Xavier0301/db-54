@@ -283,7 +283,7 @@ CREATE TABLE PersonSex(id INTEGER AUTO_INCREMENT,
 ```SQL
 CREATE TABLE PartySobriety(id INTEGER AUTO_INCREMENT,
 			    description CHAR(1) NOT NULL UNIQUE,
-                            CONSTRAINT sobriety_check CHECK (desc IN ('A', 'B', 'C', 'D', 'G', 'H')),
+                            CONSTRAINT sobriety_check CHECK (description IN ('A', 'B', 'C', 'D', 'G', 'H')),
 			    PRIMARY KEY(id))
 ```
 
