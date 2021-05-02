@@ -65,14 +65,14 @@ ORDER BY counts DESC
 ### 7th Query
 ```SQL
 SELECT P.at_fault 
-FROM PARTIES P
+FROM Parties P
 WHERE P.at_fault = 1 AND P.financial_responsibility = ‘Y’ AND 
 ```
 
 ### 8th Query
 ```SQL
 SELECT AVG(V.victim_age)
-FROM VICTIMS V
+FROM Victims V
 
 SELECT
   victim_seating_position
@@ -89,11 +89,11 @@ limit
 ### 9th Query
 ```SQL
 SELECT ((SELECT V.victim_safety_equipment_1, V.victim_safety_equipment_2, COUNT(*)
-FROM VICTIMS V, VictimSafetyEquipment S
+FROM Victims V, VictimSafetyEquipment S
 WHERE (V.victim_safety_equipment_1 = S.id OR V.victim_safety_equipment_2 = S.id)
 AND S.description LIKE '%Lap Belt Used%') / 
 (SELECT DISTINCT P.id, COUNT(*)
-FROM PARTIES P))
+FROM Parties P))
 ```
 
 ### 10th Query
@@ -125,7 +125,7 @@ SELECT
   AND '22:59:00' THEN '22' ELSE '23' END AS `Range`,
   count(1) as `Count`
 from
-  COLLISION
+  Collisions
 group by
   `Range`;
 ```
