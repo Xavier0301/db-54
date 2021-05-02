@@ -50,16 +50,16 @@ limit 1
 
 ### 6th Query
 ```SQL
-SELECT
-  WEATHER_1,
-  WEATHER_2,
-  COUNT(*) as counts
-FROM
-  FACTORS
-GROUP BY
-  WEATHER
-ORDER BY
-  counts DESC
+SELECT weather, SUM(counts) as counts FROM
+(SELECT f.weather_1 as weather, COUNT(*) as counts
+FROM Factors f
+GROUP BY f.weather_1
+UNION ALL
+SELECT f.weather_2 as weather, COUNT(*) as counts
+FROM Factors f
+GROUP BY f.weather_2) AS WeatherList
+GROUP BY weather
+ORDER BY counts DESC
 ```
 
 ### 7th Query
