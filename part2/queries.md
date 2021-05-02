@@ -88,11 +88,11 @@ limit
 
 ### 9th Query
 ```SQL
-SELECT ((SELECT V.victim_safety_equipment_1, V.victim_safety_equipment_2 COUNT(*)
+SELECT ((SELECT V.victim_safety_equipment_1, V.victim_safety_equipment_2, COUNT(*)
 FROM VICTIMS V, VictimSafetyEquipment S
 WHERE (V.victim_safety_equipment_1 = S.id OR V.victim_safety_equipment_2 = S.id)
 AND S.description LIKE '%Lap Belt Used%') / 
-(SELECT DISTINCT P.id COUNT(*)
+(SELECT DISTINCT P.id, COUNT(*)
 FROM PARTIES P))
 ```
 
