@@ -70,8 +70,23 @@ WHERE P.at_fault = 1 AND P.financial_responsibility = ‘Y’ AND
 
 ### 8th Query
 ```SQL
-SELECT AVG(V.victim_age)
-FROM Victims V
+SELECT
+  *
+FROM
+  (
+    SELECT
+      V.victim_age AS age,
+      COUNT(*) AS total,
+      @RankRow: = @RankRow + 1 AS Rank
+    FROM
+      Victims
+    ORDER BY
+      age DESC
+  )
+  JOIN (
+    SELECT
+      @RankRow: = total / 2
+  )
 
 SELECT
   victim_seating_position
