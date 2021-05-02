@@ -7,13 +7,12 @@ GROUP BY EXTRACT(YEAR FROM c.collision_date)
 
 ### 2nd Query of Most Popular Vehicle Make
 ```SQL
-WITH MostPopularVehicle(number_of_vehicles, brand_id) as SELECT COUNT(p.id) as number_of_vehicles, v.vehicle_make as brand_id
+CREATE VIEW MostPopularVehicle AS
+(SELECT COUNT(p.id) as number_of_vehicles, v.vehicle_make as brand_id
 			     FROM Parties p, Vehicles v
 			     WHERE p.id = v.party_id GROUP BY v.vehicle_make
 			     ORDER BY number_of_vehicles desc
-			     limit 1;
-			     
-
+			     limit 1)
 			     
 SELECT vm.description as most_popular , vp.number_of_vehicles 
 FROM   VehiculeMake vm , MostPopularVehicle vp 
