@@ -2,7 +2,7 @@
 ```SQL
 SELECT EXTRACT(YEAR FROM c.collision_date) as year, COUNT(*) as number_of_collisions
 FROM Collisions c 
-GROUP BY collision_date 
+GROUP BY EXTRACT(YEAR FROM c.collision_date) 
 ```
 
 ### 2nd Query of Most Popular Vehicle Make
