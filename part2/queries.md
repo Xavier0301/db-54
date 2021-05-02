@@ -1,4 +1,4 @@
-### 1st Query of Most common year
+### 1st Query of the number of collisions per year.
 ```SQL
 SELECT EXTRACT(YEAR FROM c.collision_date) as year, COUNT(*) as number_of_collisions
 FROM Collisions c 
