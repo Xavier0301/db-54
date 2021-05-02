@@ -142,7 +142,7 @@ CREATE TABLE Lighting(id INTEGER AUTO_INCREMENT,
 
 ```SQL
 CREATE TABLE LocationType(id INTEGER AUTO_INCREMENT,
-			   desc VARCHAR(20) NOT NULL UNIQUE,
+			   description VARCHAR(20) NOT NULL UNIQUE,
 			   PRIMARY KEY(id))
 ```
 
@@ -179,7 +179,7 @@ CREATE TABLE TypeOfCollision(id INTEGER AUTO_INCREMENT,
 
 ```SQL
 CREATE TABLE Weather(id INTEGER AUTO_INCREMENT,
-		      desc VARCHAR(10) NOT NULL UNIQUE,
+		      description VARCHAR(10) NOT NULL UNIQUE,
 		      PRIMARY KEY(id))
 ```
 
@@ -282,7 +282,7 @@ CREATE TABLE PersonSex(id INTEGER AUTO_INCREMENT,
 
 ```SQL
 CREATE TABLE PartySobriety(id INTEGER AUTO_INCREMENT,
-			    desc CHAR(1) NOT NULL UNIQUE,
+			    description CHAR(1) NOT NULL UNIQUE,
                             CONSTRAINT sobriety_check CHECK (desc IN ('A', 'B', 'C', 'D', 'G', 'H')),
 			    PRIMARY KEY(id))
 ```
