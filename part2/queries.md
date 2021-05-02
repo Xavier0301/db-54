@@ -53,7 +53,7 @@ FROM Collisions snowy , Factors f , Weather w
 WHERE snowy.case_id = f.case_id AND
       (f.weather_1 = w.id OR
       f.weather_2 = w.id) AND
-      w.description LIKE '%snow' 
+      w.description LIKE '%snow%' 
 ```
 
 ### 5th Query the number of collisions per day of the week, and find the day that witnessed the highest number of collisions. List the day along with the number of collisions.
