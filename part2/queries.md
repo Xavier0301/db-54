@@ -50,10 +50,16 @@ limit 1
 
 ### 6th Query
 ```SQL
-SELECT WEATHER_1, WEATHER_2 COUNT(*) AS counts
-FROM FACTORS
-GROUP BY WEATHER
-ORDER BY counts DESC
+SELECT
+  WEATHER_1,
+  WEATHER_2,
+  COUNT(*) as counts
+FROM
+  FACTORS
+GROUP BY
+  WEATHER
+ORDER BY
+  counts DESC
 ```
 
 ### 7th Query
@@ -68,19 +74,25 @@ WHERE P.at_fault = 1 AND P.financial_responsibility = ‘Y’ AND
 SELECT AVG(V.victim_age)
 FROM VICTIMS V
 
-SELECT TOP 1 victim_seating_position
-FROM VICTIMS
-GROUP BY victim_seating_position
-ORDER BY COUNT(*) DESC
+SELECT
+  victim_seating_position
+FROM
+  VICTIMS
+GROUP BY
+  victim_seating_position
+ORDER BY
+  COUNT(*) DESC
+limit
+  1
 ```
 
 ### 9th Query
 ```SQL
-SELECT ((SELECT V.victim_safety_equipment_1, V.victim_safety_equipment_2 COUNT(*)
+SELECT ((SELECT V.victim_safety_equipment_1, V.victim_safety_equipment_2, COUNT(*)
 FROM VICTIMS V, VictimSafetyEquipment S
 WHERE (V.victim_safety_equipment_1 = S.id OR V.victim_safety_equipment_2 = S.id)
 AND S.description LIKE '%Lap Belt Used%') / 
-(SELECT DISTINCT P.id COUNT(*)
+(SELECT DISTINCT P.id, COUNT(*)
 FROM PARTIES P))
 ```
 
