@@ -63,9 +63,22 @@ ORDER BY counts DESC
 
 ### 7th Query
 ```SQL
-SELECT P.at_fault 
-FROM Parties P
-WHERE P.at_fault = 1 AND P.financial_responsibility = ‘Y’ AND 
+SELECT COUNT(*) as count 
+FROM Parties p, Factors f
+WHERE 
+	p.at_fault = 1 
+	AND 
+	p.financial_responsibility IN 
+		(SELECT id FROM FinancialResponsibility WHERE description='Y')
+	AND 
+	f.case_id = p.case_id
+	AND 
+		(f.road_condition_1 IN
+			(SELECT id FROM RoadCondition WHERE description='B') 
+		OR
+		f.road_condition_2 IN 
+			(SELECT id FROM RoadCondition WHERE description='B') 
+		)
 ```
 
 ### 8th Query
