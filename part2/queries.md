@@ -48,7 +48,7 @@ SELECT
 
 ### 4rth Query of the number of collisions that have occurred under snowy weather conditions
 ```SQL
-SELECT COUNT(snowy.*)
+SELECT COUNT(snowy.case_id)
 FROM Collisions snowy , Factors f , Weather w 
 WHERE snowy.case_id = f.case_id AND
       (f.weather_1 = w.id OR
