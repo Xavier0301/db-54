@@ -21,11 +21,29 @@ WHERE  vm.id = vp.brand_id
 
 ### 3rd Query of the fraction of total collisions that happened under dark lighting conditions
 ```SQL
-SELECT COUNT(darkc.*)*1.0/COUNT(c.*)
-FROM   Collisions c , Collisions darkc , Factors f , Lighting l
-WHERE  darkc.case_id = f.case_id AND 
-       f.lighting = l.id	  AND
-       l.description LIKE '%dark'
+SELECT
+  (
+    SELECT
+      COUNT(*)
+    FROM
+      (
+        SELECT
+          c.case_id
+        FROM
+          Collisions c,
+          Factors f,
+          Lighting l
+        WHERE
+          c.case_id = f.case_id
+          AND f.lighting = l.id
+          AND l.description LIKE 'dark%'
+      ) AS DarkCols
+  ) / (
+    SELECT
+      COUNT(*)
+    FROM
+      Collisions
+  )
 ```
 
 ### 4rth Query of the number of collisions that have occurred under snowy weather conditions
@@ -74,10 +92,10 @@ WHERE
 	f.case_id = p.case_id
 	AND 
 		(f.road_condition_1 IN
-			(SELECT id FROM RoadCondition WHERE description='B') 
+			(SELECT id FROM RoadCondition WHERE description='loose material') 
 		OR
 		f.road_condition_2 IN 
-			(SELECT id FROM RoadCondition WHERE description='B') 
+			(SELECT id FROM RoadCondition WHERE description='loose material') 
 		)
 ```
 
