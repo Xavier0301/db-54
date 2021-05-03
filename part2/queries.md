@@ -59,11 +59,11 @@ WHERE snowy.case_id = f.case_id AND
 ### 5th Query the number of collisions per day of the week, and find the day that witnessed the highest number of collisions. List the day along with the number of collisions.
 
 ```SQL
-SELECT FORMAT(c.collision_date,'dddd') as day , COUNT(*) as count1 
-FROM   Collisions c 
+SELECT DAYOFWEEK(collision_date) as day , COUNT(*) as counts 
+FROM   Collisions
 GROUP BY day
-ORDER BY count1 desc
-limit 1
+ORDER BY counts desc
+LIMIT 1
 ```
 
 ### 6th Query
