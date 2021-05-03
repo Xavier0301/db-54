@@ -1,6 +1,6 @@
 # ER Model
 
-<img src="https://user-images.githubusercontent.com/35627867/112846274-27b3d580-90a6-11eb-8029-fe0aa248594e.jpg" alt="drawing"/>
+![er_model](https://user-images.githubusercontent.com/35627867/116890924-6f41fa00-ac2e-11eb-9c64-be2c4089f2c2.jpg)
 
 # Data constraints
 
