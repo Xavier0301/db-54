@@ -102,22 +102,22 @@ WHERE
 
 ### 8th Query
 ```SQL
+SET
+  @rowindex: = -1;
 SELECT
-  TOP 50 PERCENT * AS age2
+  AVG(t.age)
 FROM
   (
     SELECT
-      V.victim_age AS age,
-      COUNT(*) AS total
+      @rowindex: = @rowindex + 1 AS rowindex,
+      V.victim_age AS age
     FROM
-      Victims
+      Victims V
     ORDER BY
-      age DESC
-  )
-ORDER BY
-  age ASC
-limit
-  1
+      V.victim_age
+  ) AS t
+WHERE
+  t.rowindex IN (FLOOR(@rowindex / 2), CEIL(@rowindex / 2));
 
 SELECT
   victim_seating_position
