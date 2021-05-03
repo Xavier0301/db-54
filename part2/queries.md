@@ -102,22 +102,7 @@ WHERE
 
 ### 8th Query
 ```SQL
-SET
-  @rowindex: = -1;
-SELECT
-  AVG(t.age)
-FROM
-  (
-    SELECT
-      @rowindex: = @rowindex + 1 AS rowindex,
-      V.victim_age AS age
-    FROM
-      Victims V
-    ORDER BY
-      V.victim_age
-  ) AS t
-WHERE
-  t.rowindex IN (FLOOR(@rowindex / 2), CEIL(@rowindex / 2));
+CREATE INDEX 
 
 SELECT
   victim_seating_position
@@ -159,13 +144,13 @@ SELECT
 ### 10th Query
 ```SQL
 SELECT
-  T.counts /(
+  counts /(
     SELECT
       DISTINCT C.case_id,
       COUNT(*)
     FROM
       Collisions C
-  )
+  ) AS ColsCount
 FROM(
     SELECT
       CASE WHEN collision_time BETWEEN '00:00:00'
@@ -191,11 +176,11 @@ FROM(
       AND '19:59:00' THEN '19' WHEN collision_time BETWEEN '20:00:00'
       AND '20:59:00' THEN '20' WHEN collision_time BETWEEN '21:00:00'
       AND '21:59:00' THEN '21' WHEN collision_time BETWEEN '22:00:00'
-      AND '22:59:00' THEN '22' ELSE '23' END AS `Range`,
+      AND '22:59:00' THEN '22' ELSE '23' END AS Range,
       count(1) as counts
     from
       Collisions
     group by
-      `Range`
-  ) T
+      Range
+  ) AS ColsHourGp
 ```

@@ -354,6 +354,10 @@ CREATE TABLE PersonSex(id INTEGER AUTO_INCREMENT,
 		       PRIMARY KEY(id))
 ```
 
+# Design modification choices
+
+# How we did the import
+
 # Data cleaning choices
 
 ## Collisions
@@ -379,3 +383,5 @@ CREATE TABLE PersonSex(id INTEGER AUTO_INCREMENT,
 ## Victims
 
 * In the table `Victims`, `victim_degree_of_injury` has an undefined `7` which is replaced by `NULL`. This occurs once throughout the table.
+
+# Queries
