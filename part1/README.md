@@ -366,6 +366,20 @@ We noticed that both Victim and Party entities were modeled as strong entities. 
 
 # How we did the import
 
+The following is implementation details that we inserted for completion.
+
+## The database server
+
+We decided to run `MySQL` locally after failing to get acceptable performances on AWS/GCP.
+
+## The method to dump data
+
+* After having declared every table, we simply performed a row-wise import, using `pd.iterrows` and `INSERT INTO` commands.
+
+* Sattelite tables were populated on the fly.
+
+* `id`s from such Sattelite tables were cached during import for performance.
+
 # Data cleaning choices
 
 ## Collisions
