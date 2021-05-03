@@ -511,6 +511,10 @@ WHERE
 
 ## Result
 
+Brand | Count
+:---: | :---:
+FORD | 1129719
+
 ## Query 3
 
 Find the fraction of total collisions that happened under dark lighting conditions.
