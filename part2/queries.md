@@ -102,7 +102,9 @@ WHERE
 
 ### 8th Query
 ```SQL
-CREATE INDEX 
+CREATE INDEX index_victim_age ON Victims(victim_age)
+
+SELECT MEDIAN(victim_age) FROM Victims
 
 SELECT
   victim_seating_position
@@ -144,43 +146,33 @@ SELECT
 ### 10th Query
 ```SQL
 SELECT
-  counts /(
-    SELECT
-      DISTINCT C.case_id,
-      COUNT(*)
-    FROM
-      Collisions C
-  ) AS ColsCount
-FROM(
-    SELECT
-      CASE WHEN collision_time BETWEEN '00:00:00'
-      AND '00:59:00' THEN '0' WHEN collision_time BETWEEN '01:00:00'
-      AND '01:59:00' THEN '1' WHEN collision_time BETWEEN '02:00:00'
-      AND '02:59:00' THEN '2' WHEN collision_time BETWEEN '03:00:00'
-      AND '03:59:00' THEN '3' WHEN collision_time BETWEEN '04:00:00'
-      AND '04:59:00' THEN '4' WHEN collision_time BETWEEN '05:00:00'
-      AND '05:59:00' THEN '5' WHEN collision_time BETWEEN '06:00:00'
-      AND '06:59:00' THEN '6' WHEN collision_time BETWEEN '07:00:00'
-      AND '07:59:00' THEN '7' WHEN collision_time BETWEEN '08:00:00'
-      AND '08:59:00' THEN '8' WHEN collision_time BETWEEN '09:00:00'
-      AND '09:59:00' THEN '9' WHEN collision_time BETWEEN '10:00:00'
-      AND '10:59:00' THEN '10' WHEN collision_time BETWEEN '11:00:00'
-      AND '11:59:00' THEN '11' WHEN collision_time BETWEEN '12:00:00'
-      AND '12:59:00' THEN '12' WHEN collision_time BETWEEN '13:00:00'
-      AND '13:59:00' THEN '13' WHEN collision_time BETWEEN '14:00:00'
-      AND '14:59:00' THEN '14' WHEN collision_time BETWEEN '15:00:00'
-      AND '15:59:00' THEN '15' WHEN collision_time BETWEEN '16:00:00'
-      AND '16:59:00' THEN '16' WHEN collision_time BETWEEN '17:00:00'
-      AND '17:59:00' THEN '17' WHEN collision_time BETWEEN '18:00:00'
-      AND '18:59:00' THEN '18' WHEN collision_time BETWEEN '19:00:00'
-      AND '19:59:00' THEN '19' WHEN collision_time BETWEEN '20:00:00'
-      AND '20:59:00' THEN '20' WHEN collision_time BETWEEN '21:00:00'
-      AND '21:59:00' THEN '21' WHEN collision_time BETWEEN '22:00:00'
-      AND '22:59:00' THEN '22' ELSE '23' END AS Range,
-      count(1) as counts
-    from
-      Collisions
-    group by
-      Range
-  ) AS ColsHourGp
+   CASE WHEN collision_time BETWEEN '00:00:00'
+   AND '00:59:00' THEN '0' WHEN collision_time BETWEEN '01:00:00'
+   AND '01:59:00' THEN '1' WHEN collision_time BETWEEN '02:00:00'
+   AND '02:59:00' THEN '2' WHEN collision_time BETWEEN '03:00:00'
+   AND '03:59:00' THEN '3' WHEN collision_time BETWEEN '04:00:00'
+   AND '04:59:00' THEN '4' WHEN collision_time BETWEEN '05:00:00'
+   AND '05:59:00' THEN '5' WHEN collision_time BETWEEN '06:00:00'
+   AND '06:59:00' THEN '6' WHEN collision_time BETWEEN '07:00:00'
+   AND '07:59:00' THEN '7' WHEN collision_time BETWEEN '08:00:00'
+   AND '08:59:00' THEN '8' WHEN collision_time BETWEEN '09:00:00'
+   AND '09:59:00' THEN '9' WHEN collision_time BETWEEN '10:00:00'
+   AND '10:59:00' THEN '10' WHEN collision_time BETWEEN '11:00:00'
+   AND '11:59:00' THEN '11' WHEN collision_time BETWEEN '12:00:00'
+   AND '12:59:00' THEN '12' WHEN collision_time BETWEEN '13:00:00'
+   AND '13:59:00' THEN '13' WHEN collision_time BETWEEN '14:00:00'
+   AND '14:59:00' THEN '14' WHEN collision_time BETWEEN '15:00:00'
+   AND '15:59:00' THEN '15' WHEN collision_time BETWEEN '16:00:00'
+   AND '16:59:00' THEN '16' WHEN collision_time BETWEEN '17:00:00'
+   AND '17:59:00' THEN '17' WHEN collision_time BETWEEN '18:00:00'
+   AND '18:59:00' THEN '18' WHEN collision_time BETWEEN '19:00:00'
+   AND '19:59:00' THEN '19' WHEN collision_time BETWEEN '20:00:00'
+   AND '20:59:00' THEN '20' WHEN collision_time BETWEEN '21:00:00'
+   AND '21:59:00' THEN '21' WHEN collision_time BETWEEN '22:00:00'
+   AND '22:59:00' THEN '22' ELSE '23' END AS `Range`,
+   count(1) / (SELECT COUNT(*) FROM Collisions) as `Count`
+ FROM
+   Collisions
+ GROUP BY
+   `Range`
 ```
