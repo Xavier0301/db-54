@@ -356,6 +356,14 @@ CREATE TABLE PersonSex(id INTEGER AUTO_INCREMENT,
 
 # Design modification choices
 
+We made certain design modifications to respond to the feedback that we got after the last deliverable. 
+
+Firstly, to avoid having to store certain strings over and over again, we created satellite enum tables to which we reference from within our main entities. This also responded to other points of the feedback, specifically by making weather, road conditions and other_associated_factors a separate entity. We also removed the Party Context and Victim Context entities and simply merged their attributes to the ones in the Party and Victim entities.
+
+We decided to keep safety equipment related attributes inside the Party and Victim entities instead of migrating them to a separate safety equipment entity. This is because since these attributes exist individually for victims and parties, it seemed more logical to us to keep them with those entities rather than creating a new entity that would hold information for different types of participants in the collision.
+
+We noticed that both Victim and Party entities were modeled as strong entities. In order to turn these into weak entities, as suggested, we added a foreign key : the case id. 
+
 # How we did the import
 
 # Data cleaning choices
