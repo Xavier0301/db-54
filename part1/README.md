@@ -358,9 +358,23 @@ CREATE TABLE PersonSex(id INTEGER AUTO_INCREMENT,
 
 We made certain design modifications to respond to the feedback that we got after the last deliverable. 
 
-Firstly, to avoid having to store certain strings over and over again, we created satellite enum tables to which we reference from within our main entities. This also responded to other points of the feedback, specifically by making weather, road conditions and other_associated_factors a separate entity. We also removed the Party Context and Victim Context entities and simply merged their attributes to the ones in the Party and Victim entities.
+> Think about the repeated information stored in rows of your table with your current entity modeling. As a thought experiment, if 1000 accidents took place in the same county_city_location "Lausanne", it would not be efficient to repeatedly store "Lausanne" 1000 times in the rows of our collision table. We'd prefer to store it only once as a single row in a separate location entity, and reference it. Apply this logic to your modeling structure, starting with the feedback below.
+
+Firstly, to avoid having to store certain strings over and over again, we created satellite enum tables to which we reference from within our main entities. 
+
+> Consider modeling "other_associated_factors" as a separate entity. Consider modeling road conditions and weather as separate entities.
+
+The satellite table modeling also responded to this point of the feedback by making weather, road conditions and other_associated_factors a separate entity. 
+
+> There is no strong benefit to creating "Party Contexts" and "Victim Contexts" entities separate from your Party and Victim entities, because all this requires is more joining at query time
+
+We removed the Party Context and Victim Context entities and simply merged their attributes to the ones in the Party and Victim entities.
+
+> Please justify your decision to model safety equipment-related information as fields of victims and party instead of migrating them to a separate 'Safety Equipment' entity.
 
 We decided to keep safety equipment related attributes inside the Party and Victim entities instead of migrating them to a separate safety equipment entity. This is because since these attributes exist individually for victims and parties, it seemed more logical to us to keep them with those entities rather than creating a new entity that would hold information for different types of participants in the collision.
+
+> Strong vs. weak entities: consider converting currently-modeled-as-strong, non-uniquely identifiable entities to weak ones. For example, parties can be modeled as a weak entity, as they only exist in the context of a collision.
 
 We noticed that both Victim and Party entities were modeled as strong entities. In order to turn these into weak entities, as suggested, we added a foreign key : the case id. 
 
