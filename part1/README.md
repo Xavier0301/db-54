@@ -449,7 +449,7 @@ SELECT
     FROM
       c.collision_date
   ) as year,
-  COUNT(*) as number_of_collisions
+  COUNT(*) as collisions_count
 FROM
   Collisions c
 GROUP BY
@@ -462,7 +462,7 @@ GROUP BY
 
 ## Result
 
-Year | Count
+year | collisions_count
 :---: | :---:
 2002 | 544741
 2003 | 538953
@@ -494,14 +494,14 @@ CREATE VIEW MostPopularVehicle AS (
   GROUP BY
     v.vehicle_make
   ORDER BY
-    number_of_vehicles desc
-  limit
+    number_of_vehicles DESC
+  LIMIT
     1
 )
 
 SELECT
-  vm.description as most_popular,
-  vp.number_of_vehicles as number_of_vehicles
+  vm.description as brand,
+  vp.number_of_vehicles as vehicle_count
 FROM
   VehiculeMake vm,
   MostPopularVehicle vp
@@ -511,7 +511,7 @@ WHERE
 
 ## Result
 
-Brand | Count
+brand | vehicle_count
 :---: | :---:
 FORD | 1129719
 
@@ -549,7 +549,7 @@ SELECT
 
 ## Result
 
-|Fraction|
+|fraction|
 |:---:|
 |0.2802|
 
@@ -577,7 +577,7 @@ WHERE
 
 ## Result
 
-|Count|
+|count|
 |:---:|
 |8542|
 
@@ -591,7 +591,7 @@ number of collisions. List the day along with the number of collisions.
 ```SQL
 SELECT
   DAYOFWEEK(collision_date) as day,
-  COUNT(*) as counts
+  COUNT(*) as count
 FROM
   Collisions
 GROUP BY
@@ -604,7 +604,7 @@ LIMIT
 
 ## Result
 
-Day | Count
+day | count
 :---:|:---:
 6|614143
 
@@ -618,7 +618,7 @@ of collisions.
 ```SQL
 SELECT
   weather,
-  SUM(counts) as counts
+  SUM(counts) as count
 FROM
   (
     SELECT
@@ -645,7 +645,7 @@ ORDER BY
 
 ## Result
 
-Weather type | Count
+weather | count
 :---: | :---:
 None | 3593584
 1 | 2942023
@@ -665,7 +665,7 @@ conditions.
 
 ```SQL
 SELECT
-  COUNT(*) as count
+  COUNT(*)
 FROM
   Parties p,
   Factors f
@@ -702,7 +702,7 @@ WHERE
 
 ## Result
 
-|Count|
+|count|
 |:---:|
 |4818|
 
@@ -718,7 +718,7 @@ CREATE INDEX index_victim_age ON Victims(victim_age)
 SET @rowindex := -1;
  
 SELECT
-   AVG(d.age) as Median
+   AVG(d.age) as median
 FROM
    (SELECT @rowindex:=@rowindex + 1 AS rowindex,
            v.victim_age AS age
@@ -728,26 +728,26 @@ WHERE
 d.rowindex IN (FLOOR(@rowindex / 2), CEIL(@rowindex / 2));
 
 SELECT
-  victim_seating_position
+  victim_seating_position as seating_position
 FROM
   Victims
 GROUP BY
   victim_seating_position
 ORDER BY
   COUNT(*) DESC
-limit
+LIMIT
   1
 ```
 
 ## Result
 
-|Median|
+|median|
 |:---:|
 |24|
 
 and 
 
-|Seating position|
+|seating_position|
 |:---:|
 |3|
 
@@ -783,7 +783,7 @@ SELECT
 
 ## Result
 
-|Fraction|
+|fraction|
 |:---:|
 |0.7495|
 
@@ -828,7 +828,7 @@ SELECT
 
 ## Result
 
-Hour Ranges | Counts
+hour_ranges | count
 :---: | :---:
 15 | 0.0775
 19 | 0.0443
