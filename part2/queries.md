@@ -133,12 +133,27 @@ limit
 
 ### 9th Query
 ```SQL
-SELECT ((SELECT V.victim_safety_equipment_1, V.victim_safety_equipment_2, COUNT(*)
-FROM Victims V, VictimSafetyEquipment S
-WHERE (V.victim_safety_equipment_1 = S.id OR V.victim_safety_equipment_2 = S.id)
-AND S.description LIKE '%Lap Belt Used%') / 
-(SELECT DISTINCT P.id, COUNT(*)
-FROM Parties P))
+SELECT
+  (
+    (
+      SELECT
+        COUNT(V.case_id)
+      FROM
+        Victims V,
+        VictimSafetyEquipment S
+      WHERE
+        (
+          V.victim_safety_equipment_1 = S.id
+          OR V.victim_safety_equipment_2 = S.id
+        )
+        AND S.description IN ('C', 'E', 'G')
+    ) / (
+      SELECT
+        COUNT(*)
+      FROM
+        Victims
+    )
+  )
 ```
 
 ### 10th Query
