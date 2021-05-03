@@ -368,6 +368,8 @@ Firstly, to avoid having to store certain strings over and over again, we create
 
 The satellite table modeling also responded to this point of the feedback by making weather, road conditions and other_associated_factors a separate entity. 
 
+To be consistant throughout the columns, we had to model any column like the ones mentioned as separate entities. There are too much of these to mention here.
+
 > There is no strong benefit to creating "Party Contexts" and "Victim Contexts" entities separate from your Party and Victim entities, because all this requires is more joining at query time
 
 We removed the Party Context and Victim Context entities and simply merged their attributes to the ones in the Party and Victim entities.
