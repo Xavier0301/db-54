@@ -159,7 +159,7 @@ SELECT
 ### 10th Query
 ```SQL
 SELECT
-  counts /(
+  T.counts /(
     SELECT
       DISTINCT C.case_id,
       COUNT(*)
@@ -197,5 +197,5 @@ FROM(
       Collisions
     group by
       `Range`
-  )
+  ) T
 ```
