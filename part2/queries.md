@@ -102,18 +102,22 @@ WHERE
 
 ### 8th Query
 ```SQL
-SELECT *
-FROM (
+SELECT
+  TOP 50 PERCENT * AS age2
+FROM
+  (
     SELECT
       V.victim_age AS age,
-      COUNT(*) AS total,
-      @RankRow: = @RankRow + 1 AS Rank
+      COUNT(*) AS total
     FROM
       Victims
     ORDER BY
       age DESC
   )
-  JOIN (SELECT @RankRow: = total / 2)
+ORDER BY
+  age ASC
+limit
+  1
 
 SELECT
   victim_seating_position
