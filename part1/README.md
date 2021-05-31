@@ -844,6 +844,8 @@ None | 0.80600
 
 # Query 1
 
+For all the designated age groups, find the percentage of cases where the driver was the party at fault.
+
 ## Comand
 
 ```SQL
@@ -895,7 +897,13 @@ Elder II | 43.00967
 Young II | 50.83931
 Elder I | 38.93744
 
+## Conclusion
+
+We notice that in general, young and underage people should have to pay more for their insurance since they get into more accidents in general, whilst elders should have to pay less.
+
 # Query 2
+
+Find the top 5 vehicle types that were involved in collisions on roads with holes, as well as the associated number of collisions.
 
 ## Command
 
@@ -927,6 +935,8 @@ bicycle | 430
 truck or truck tractor with trailer | 369
 
 # Query 3
+
+Find the top 10 vehicle makes that were involved in collisions with victims suffering either a severe injury or who died, as well as the associated number of victims.
 
 ## Command
 
@@ -972,6 +982,8 @@ HARLEY-DAVIDSON | 3810
 MISCELLANEOUS | 3753
 
 # Query 4
+
+Find the safest and least safe seating position, where safety is defined by the safety index calculated as the percentage of collisions where the victim in the corresponding seating position suffered no injury.
 
 ## Command
 
@@ -1094,6 +1106,8 @@ Driver | 0.0090
 
 # Query 5
 
+Find how many vehicle types have participated in at least 10 collisions in at least half of the cities.
+
 ## Command
 
 ```SQL
@@ -1113,6 +1127,8 @@ FROM Locations)/2
 14
 
 # Query 6
+
+For each of the top-3 most populated cities, show the city location, population and the bottom-10 collisions in terms of average victim age.
 
 ## Command
 
@@ -1274,6 +1290,8 @@ city_location | description | collision_id | average_age
 
 # Query 7
 
+Find all collisions that satisfy the following: the collision was of type pedestrian and all victims were above 100 years old. For each of the qualifying collisions, show the collision id and the age of the eldest collision victim.
+
 ## Command
 
 ```SQL
@@ -1335,6 +1353,8 @@ case_id | age
 
 # Query 8 
 
+Find the vehicles that have participated in at least 10 collisions. Show the vehicle id and number of collisions the vehicle has participated in, sorted according to number of collisions (descending order). 
+
 ## Command 
 
 ```SQL
@@ -1387,7 +1407,13 @@ TOYOTA | 2003 | passenger car | 35943
 HONDA | 2002 | passenger car | 35785
 FORD | 2002 | passenger car | 35460
 
+## Conclusions
+
+We notice that mostly Toyota, Honda and Ford card participate in collisions, which is not surprising as they are the most popular car makes in the USA.
+
 # Query 9
+
+Find the top-10 (with respect to number of collisions) cities. For each of these cities, show the city location and number of collisions. 
 
 ## Command
 
@@ -1424,6 +1450,8 @@ county_city_location | count
 3801 | 48450
 
 # Query 10
+
+Are there more accidents around dawn, dusk, during the day, or during the night Display the number of accidents, and to which group it belongs, and make your conclusion based on absolute number of accidents in the given 4 periods. 
 
 ## Command
 
@@ -1481,8 +1509,9 @@ day | 2496938
 dusk | 74906
 dawn | 40756
 
+## Conclusions
 
-
+We notice that most collisions happen during the day, which makes sense since there is a lot more traffic during that time. Dusk and dawn having much less collisions also makes sense as they only span two hours (despite those two hours being rush hour) whilst the other periods span ten hours.
 
 # Optimization Part
 We decided to optimize the 5 following queries : 2,3,7,8 and 10.
@@ -1498,7 +1527,7 @@ We optimise the query by adding multiple indexes:
 * On `party_id` of `Victims`
 * On `id` of `VehicleMake`
 
-The total cost dropped to 108691.43. Most of the decrease came from taking advantages of index when joining.
+The total cost dropped to 108691.43, reducing it by 17494926% . Most of the decrease came from taking advantages of index when joining. 
 
 The runtime of the query is:
 * Unoptimised: 14s700ms
@@ -1514,7 +1543,7 @@ We optimise the query by adding multiple indexes:
 * On `party_id` of `Victims`
 * On `id` of `VehicleMake`
 
-The total cost dropped to 6763992.34. Most of the decrease came from taking advantages of index when joining.
+The total cost dropped to 6763992.34, reducing it by 457219%. Most of the decrease came from taking advantages of index when joining.
 
 The runtime of the query is:
 * Unoptimised: 10s600ms
@@ -1542,7 +1571,7 @@ The runtime of the query is:
 * Unoptimised: 10s287ms
 * Optimised: 8.898ms
 
-Here is what we got after optimization (figure below), and the cost of our query is now : 1578149.12 .
+Here is what we got after optimization (figure below), and the cost of our query is now : 1578149.12, reducing it by 1% .
 
 ![](images/query7-indexes.png)
 
@@ -1568,7 +1597,7 @@ The runtime of the query is:
 * Unoptimised: 11mn20s
 * Optimised: 7mn54s
 
-Here is what we got after optimization (figure below), and the cost of our query is now : 12899075 . () See figure below :
+Here is what we got after optimization (figure below), and the cost of our query is now : 12899075, reducing it by 499848% . See figure below :
 
 ![](images/query8-indexes.png)
 
@@ -1596,5 +1625,5 @@ The runtime of the query is:
 * Unoptimised: 37s203ms
 * Optimised: 29.467ms
 
-Here is what we got after optimization (figure below), and the cost of our query is now : 2906812.20 .
+Here is what we got after optimization (figure below), and the cost of our query is now : 2906812.20, reducing it by 396672% .
 ![](images/query10-indexes.png)
