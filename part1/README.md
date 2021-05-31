@@ -1393,7 +1393,7 @@ FORD | 2002 | passenger car | 35460
 
 ## Conclusions
 
-We notice that mostly Toyota, Honda and Ford card participate in collisions, which is not surprising as they are the most popular car makes in the USA.
+We notice that mostly Toyota, Honda and Ford cars participate in collisions, which is not surprising as they are the most popular car makes in the USA.
 
 # Query 9
 
@@ -1435,7 +1435,7 @@ county_city_location | count
 
 # Query 10
 
-Are there more accidents around dawn, dusk, during the day, or during the night Display the number of accidents, and to which group it belongs, and make your conclusion based on absolute number of accidents in the given 4 periods. 
+Are there more accidents around dawn, dusk, during the day, or during the night ? Display the number of accidents, and to which group it belongs, and make your conclusion based on absolute number of accidents in the given 4 periods. 
 
 ## Command
 
