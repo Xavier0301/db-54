@@ -928,7 +928,7 @@ truck or truck tractor with trailer | 369
 
 # Query 3
 
-##Command
+## Command
 
 ```SQL
 SELECT
@@ -1491,7 +1491,37 @@ Our approach consists of checking the cost of the query by inspecting the Plan A
 
 # Query 7 Optmization
 
+### Running time before optimization : 10.287 s
+### Running time after optimization : 8.898 s
+
+We clearly see here in the figure below that our query is costly (cost : 1888463.62) and this is due to several reasons mainly the lack of indexes to make the joins fast as well as the filter that is applied to TypeOfCollision table to find the 'pedestrian' type and to the Victim table to find age > 99 .
+
+![](images/query7-no-indexes.png)
+
+
+Thus, we decide to create the following indexes :
+```SQL
+CREATE INDEX index_victim_age ON Victims(victim_age) USING BTREE;
+CREATE INDEX index_collision_id ON Collisions(case_id) USING HASH;
+CREATE INDEX index_type_of_collision ON TypeOfCollision(id) USING HASH;
+CREATE INDEX index_collision_type ON Collisions(type_of_collision) USING HASH;
+CREATE INDEX index_victim_case_id ON Victims(case_id) USING HASH;
+CREATE INDEX index_type_of_collision_description ON TypeOfCollision(description) USING HASH;
+```
+
+
+Here is what we got after optimization (figure below), and the cost of our query is now : 1578149.12
+
+![](images/query7-indexes.png)
 
 
 
 
+
+# Query 8 Optimization
+
+# Query 10 Optimization
+
+![](images/query10-no-indexes.png)
+
+![](images/query10-indexes.png)
