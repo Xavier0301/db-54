@@ -420,6 +420,14 @@ We decided to run `MySQL` locally after failing to get acceptable performances o
 
 From our checks, it seems like every victim and party in the `.csv` files has an attached `case_id` that exists in `collisions.csv`.
 
+## Disclaimer
+
+There was arguably more data cleaning that we could have done: replacing enum values that are no expressive with their full description, like `VictimSafetyEquipment` having values like `C`, `E` and `G`, which we could have replaced with `Lap Belt Used`, `Shoulder Harness Used`, `Lap/Shoulder Harness Used`. 
+
+This is something Vinitria warned us about. Unfortunately, we ran out of time knowing that we would have to replace each enum value by our own in the data cleaning process. 
+
+Therefore we placed `CASE` in queries where the data stored in the sattelite table was no expressive. For example for query 6 of deliverable 2, we replaced `weather` by its meaning with a `CASE WEATHER WHEN 1 THEN 'clear'...`.
+
 # Queries - Deliverable 2
 
 As asked, we only included the first 20 rows or less.
@@ -1393,7 +1401,7 @@ FORD | 2002 | passenger car | 35460
 
 ## Conclusions
 
-We notice that mostly Toyota, Honda and Ford cars participate in collisions, which is not surprising as they are the most popular car makes in the USA.
+We notice that mostly Toyota, Honda and Ford cars participate in collisions, which is not surprising as they are among the most popular car manufacturers in the USA.
 
 # Query 9
 
