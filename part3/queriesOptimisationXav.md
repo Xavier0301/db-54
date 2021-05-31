@@ -1,7 +1,3 @@
-# Query 1
-
-After 
-
 # Query 2 
 
 The unoptimised version of this query leads the database to only make full scans and hash joins. The has joins is what takes the most time, and the total cost is 1901541074130.96.
