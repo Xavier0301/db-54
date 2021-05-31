@@ -593,24 +593,28 @@ number of collisions. List the day along with the number of collisions.
 ## Command
 
 ```SQL
-SELECT
-  DAYOFWEEK(collision_date) as day,
-  COUNT(*) as count
-FROM
-  Collisions
-GROUP BY
-  day
-ORDER BY
-  counts desc
-LIMIT
-  1
+SELECT 
+  CASE DAYOFWEEK(collision_date) 
+    WHEN 1 THEN 'Sunday'
+    WHEN 2 THEN 'Monday'
+    WHEN 3 THEN 'Tuesday'
+    WHEN 4 THEN 'Wednesday'
+    WHEN 5 THEN 'Thursday'
+    WHEN 6 THEN 'Friday'
+    ELSE 'Saturday'
+  END as day, 
+  COUNT(*) as counts 
+FROM   Collisions
+GROUP BY day
+ORDER BY counts desc
+LIMIT 1
 ```
 
 ## Result
 
 day | count
 :---:|:---:
-6|614143
+Friday|614143
 
 # Query 6
 
@@ -621,7 +625,15 @@ of collisions.
 
 ```SQL
 SELECT
-  weather,
+  CASE weather
+    WHEN 1 THEN 'clear'
+    WHEN 2 THEN 'cloudy'
+    WHEN 3 THEN 'fog'
+    WHEN 4 THEN 'other'
+    WHEN 5 THEN 'raining'
+    WHEN 6 THEN 'snowing'
+    ELSE 'wind'
+  END AS weather_type,
   SUM(counts) as count
 FROM
   (
@@ -649,16 +661,16 @@ ORDER BY
 
 ## Result
 
-weather | count
+weather_type | count
 :---: | :---:
-None | 3593584
-1 | 2942023
-2 | 548420
-6 | 223797
-3 | 21289
-7 | 13958
-4 | 8542
-5 | 6965
+wind | 3592379
+clear | 2941042
+cloudy | 548250
+snowing | 223752
+fog | 21259
+wind | 13952
+other | 8530
+raining | 6960
 
 # Query 7
 
@@ -721,39 +733,34 @@ CREATE INDEX index_victim_age ON Victims(victim_age)
 
 SET @rowindex := -1;
  
-SELECT
-   AVG(d.age) as median
-FROM
-   (SELECT @rowindex:=@rowindex + 1 AS rowindex,
-           v.victim_age AS age
-    FROM Victims v
-    ORDER BY v.victim_age) AS d
-WHERE
-d.rowindex IN (FLOOR(@rowindex / 2), CEIL(@rowindex / 2));
-
-SELECT
-  victim_seating_position as seating_position
-FROM
-  Victims
-GROUP BY
-  victim_seating_position
-ORDER BY
-  COUNT(*) DESC
-LIMIT
-  1
+SELECT b.seating_position as seating_position, a.median as median
+FROM 
+  (SELECT
+    AVG(d.age) as median
+  FROM
+    (SELECT @rowindex:=@rowindex + 1 AS rowindex,
+            v.victim_age AS age
+      FROM Victims v
+      ORDER BY v.victim_age) AS d
+  WHERE
+  d.rowindex IN (FLOOR(@rowindex / 2), CEIL(@rowindex / 2))) a,
+  (SELECT
+    victim_seating_position as seating_position
+  FROM
+    Victims
+  GROUP BY
+    victim_seating_position
+  ORDER BY
+    COUNT(*) DESC
+  LIMIT
+    1) b
 ```
 
 ## Result
 
-|median|
-|:---:|
-|24|
-
-and 
-
-|seating_position|
-|:---:|
-|3|
+|seating_position|median|
+|:---:|:---:|
+|3|24|
 
 # Query 9
 
@@ -776,12 +783,7 @@ SELECT
           OR V.victim_safety_equipment_2 = S.id
         )
         AND S.description IN ('C', 'E', 'G')
-    ) / (
-      SELECT
-        COUNT(*)
-      FROM
-        Victims
-    )
+    ) / ((SELECT COUNT(*) FROM Victims) + (SELECT COUNT(*) FROM Parties))
   )
 ```
 
@@ -789,7 +791,7 @@ SELECT
 
 |fraction|
 |:---:|
-|0.7495|
+|0.2691|
 
 # Query 10
 
@@ -799,31 +801,8 @@ where 13 means period from 13:00 to 13:59). Display the ratio as percentage for 
 ## Command
 ```SQL
 SELECT
-   CASE WHEN collision_time BETWEEN '00:00:00'
-   AND '00:59:00' THEN '0' WHEN collision_time BETWEEN '01:00:00'
-   AND '01:59:00' THEN '1' WHEN collision_time BETWEEN '02:00:00'
-   AND '02:59:00' THEN '2' WHEN collision_time BETWEEN '03:00:00'
-   AND '03:59:00' THEN '3' WHEN collision_time BETWEEN '04:00:00'
-   AND '04:59:00' THEN '4' WHEN collision_time BETWEEN '05:00:00'
-   AND '05:59:00' THEN '5' WHEN collision_time BETWEEN '06:00:00'
-   AND '06:59:00' THEN '6' WHEN collision_time BETWEEN '07:00:00'
-   AND '07:59:00' THEN '7' WHEN collision_time BETWEEN '08:00:00'
-   AND '08:59:00' THEN '8' WHEN collision_time BETWEEN '09:00:00'
-   AND '09:59:00' THEN '9' WHEN collision_time BETWEEN '10:00:00'
-   AND '10:59:00' THEN '10' WHEN collision_time BETWEEN '11:00:00'
-   AND '11:59:00' THEN '11' WHEN collision_time BETWEEN '12:00:00'
-   AND '12:59:00' THEN '12' WHEN collision_time BETWEEN '13:00:00'
-   AND '13:59:00' THEN '13' WHEN collision_time BETWEEN '14:00:00'
-   AND '14:59:00' THEN '14' WHEN collision_time BETWEEN '15:00:00'
-   AND '15:59:00' THEN '15' WHEN collision_time BETWEEN '16:00:00'
-   AND '16:59:00' THEN '16' WHEN collision_time BETWEEN '17:00:00'
-   AND '17:59:00' THEN '17' WHEN collision_time BETWEEN '18:00:00'
-   AND '18:59:00' THEN '18' WHEN collision_time BETWEEN '19:00:00'
-   AND '19:59:00' THEN '19' WHEN collision_time BETWEEN '20:00:00'
-   AND '20:59:00' THEN '20' WHEN collision_time BETWEEN '21:00:00'
-   AND '21:59:00' THEN '21' WHEN collision_time BETWEEN '22:00:00'
-   AND '22:59:00' THEN '22' ELSE '23' END AS hour_ranges,
-   count(1) / (SELECT COUNT(*) FROM Collisions) as count
+   TIME_FORMAT(collision_time, "%h%p") AS hour_ranges
+   count(1) * 100.0 / (SELECT COUNT(*) FROM Collisions) as percents
  FROM
    Collisions
  GROUP BY
@@ -832,25 +811,30 @@ SELECT
 
 ## Result
 
-hour_ranges | count
+hour_ranges | percents
 :---: | :---:
-15 | 0.0775
-19 | 0.0443
-7 | 0.0517
-11 | 0.0489
-17 | 0.0790
-16 | 0.0733
-8 | 0.0523
-6 | 0.0262
-12 | 0.0578
-23 | 0.0319
-22 | 0.0286
-10 | 0.0423
-2 | 0.0181
-14 | 0.0655
-1 | 0.0183
-9 | 0.0409
-18 | 0.0630
-13 | 0.0578
-21 | 0.0328
-20 | 0.0349
+03PM | 7.74805
+07PM | 4.42864
+07AM | 5.17068
+11AM | 4.89138
+05PM | 7.90707
+04PM | 7.33087
+08AM | 5.23360
+06AM | 2.62328
+12PM | 5.77554
+11PM | 2.38452
+10PM | 2.86186
+10AM | 4.22712
+02AM | 1.80804
+02PM | 6.54758
+01AM | 1.82982
+09AM | 4.08810
+06PM | 6.30052
+01PM | 5.77527
+09PM | 3.28186
+08PM | 3.48964
+05AM | 1.44671
+12AM | 1.90845
+None | 0.80600
+03AM | 1.15409
+04AM | 0.98130

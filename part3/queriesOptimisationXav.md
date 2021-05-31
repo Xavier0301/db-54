@@ -1,8 +1,10 @@
+# Query 1
+
+After 
+
 # Query 2 
 
-The unoptimised version of this query leads the database to only make full scans and hash joins.
-* The cumulative cost for the hash joins is 4.5e12
-* The cumulative cost for the full scans is 92000
+The unoptimised version of this query leads the database to only make full scans and hash joins. The has joins is what takes the most time, and the total cost is 1901541074130.96.
 
 We optimise the query by adding multiple indexes:
 * On `case_id` of `Collisions`
@@ -10,8 +12,7 @@ We optimise the query by adding multiple indexes:
 * On `party_id` of `Victims`
 * On `id` of `VehicleMake`
 
-* The cumulative cost for the joins is now 300000, much lower as the database uses nested loops that take advantages of the indexes.
-* The cumulative cost the the scans is 19000: using an index makes a difference compared to a full scan.
+The total cost dropped to 108691.43. Most of the decrease came from taking advantages of index when joining.
 
 The runtime of the query is:
 * Unoptimised: 14s700ms
@@ -36,9 +37,7 @@ LIMIT 5
 
 # Query 3
 
-The unoptimised version of this query leads the database to only make full scans and hash joins.
-* The cumulative cost for the hash joins is 7e12
-* The cumulative cost for the full scans is 52000
+The unoptimised version of this query leads the database to only make full scans and hash joins. The has joins is what takes the most time, and the total cost is 3092626926820.33.
 
 We optimise the query by adding multiple indexes:
 * On `collision_severity` of `Collisions`
@@ -46,8 +45,7 @@ We optimise the query by adding multiple indexes:
 * On `party_id` of `Victims`
 * On `id` of `VehicleMake`
 
-* The cumulative cost for the joins is now 1.1e7, much lower as the database uses nested loops that take advantages of the indexes.
-* The cumulative cost the the scans is 50500: using an index makes a slight difference compared to a full scan.
+The total cost dropped to 6763992.34. Most of the decrease came from taking advantages of index when joining.
 
 The runtime of the query is:
 * Unoptimised: 10s600ms
