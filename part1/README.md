@@ -883,7 +883,7 @@ Elder I | 38.93744
 
 ## Conclusion
 
-We notice that in general, young and underage people should have to pay more for their insurance since they get into more accidents in general, whilst elders should have to pay less.
+We notice that in general, young and underage people should have to pay more for their insurance since they are more often the party at fault when a collision happens and they were driving, whilst elders should have to pay less.
 
 # Query 2
 
