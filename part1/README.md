@@ -6,14 +6,16 @@
 
 ## Participation constraints
 
-- Partial participation from `Collision` in the `involved in` relationship:
-        `case_id` `10` has no involved party.
-- 'Exactly one' participation from `Party` in the `involved in` relationship:
-        Every party has an associated `case_id` that is unique.
-- Partial participation from `Party` in the 'associated with' relationship:
-        Some `case_id` have no victim e.g. `case_id` `1,2`.
-- 'Exactly one' participation from `Victim` in the `associated with` relationship:
-        Given a `case_id`, if there is a victim, there is a party (unique).
+### Collisions
+- Every `Collision` has a `Case`, a `PCF`, a `Location` and a `Factor`. 
+- Conversely, each `Case`, a `PCF`, a `Location` and a `Factor` is tied back to a unique collision.
+
+### Parties
+- Every `Party` is involved in a `Collision`, but not every `Collision` has a `Party` by design.
+- Every `Party` has a unique `Vehicle` and conversely.
+
+### Victims
+- Some `Party` have no `Victim`, and a `Victim` cannot be identified as a particular `Party`: there is no participation constraint between `Parties` and `Victims`.
 
 ## Additional constraints
 
@@ -21,8 +23,7 @@
 
         > Blank or - - Not Stated
    Hence we can mark as `NOT NULL` every other attribute, except for `PRIMARY KEY`s, which are implicitely so.
- * Since we are using a star schema, we cannot express the following constraints in the SQL code: every collision has a location, a factor, a pcf and a case. Likewise, every party has a vehicle and a party context. Finally, every victim has a victim context. 
- * As said in the moodle forum, a victim is not a party.
+ * Since we are using a star schema, we cannot express the following constraints in the SQL code: every collision has a location, a factor, a pcf and a case. Likewise, every party has a vehicle. 
 
 # Design choices
 
@@ -35,25 +36,14 @@ The obvious groups are:
  * For the `Collision` entity, some attributes form the logical groups `Pcf`, `Location`, `Factor`, `Case`.
  * Similarly, for the `Victim` entity, the only logical group is `Vehicle`.
 
- We also decided to add two less obvious groups:
- * For the `Party` entity, attributes which are orthogonal to the collision are not stored in a separate entity (age, sex, ...)
 
-    Attributes which are about the context of the collision are stored in a `PartyContext` entity.
-
- * Similarly for the `Victim` entity, we have a `VictimContext` entity.
 
 ## Attribute types in the SQL code
 
  * In the project description, some attributes are enums: they can only take on specific pre-defined values. 
- Therefore, we can let them be `INTEGER` and have lookup tables when we dump the `.csv`s into a `SQL` database. 
- 
-    The alternative would be to let them be `VARCHAR`. The problem with this approach is that determining the max length means looking up the max number of characters for each attribute. 
-    
-    Granted: creating lookup tables would require the same amount of work; however it leads to  substantial data compression.
- 
-    Note that these attributes are the same that are `nullable`.
+ Therefore, we can let them be `INTEGER`, and store their actual value in what we call sattelite tables. Such tables are highlighted to be entities on the ER schema. For example: `PcfViolation` is stored in such a sattelite table. It will become apparent in the SQL code.
 
- * Similarly, `tow_away` from `Collisions` can be translated from a `float` (`0.0` or `1.0`) to a `BIT`.
+ * `case_id` is a `VARCHAR(19)` and not a `NUMERIC(19)` as it sometimes possesses leading zeros in the `.csv`. Not making the distinction would have meant multiple collisions would've been dropped for having the same `case_id`.
 
  * The rest of the attributes are clearly `INTEGER` from the project description as well as upon inspection of the values in the `.csv` files.
 
@@ -384,16 +374,6 @@ We decided to keep safety equipment related attributes inside the Party and Vict
 
 We noticed that both Victim and Party entities were modeled as strong entities. In order to turn these into weak entities, as suggested, we added a foreign key : the case id. 
 
-## Disclaimer
-
-Last second we realized that having `DECIMAL(19)` as the type of `case_id` was not suitable. 
-
-Although `pandas` indicated `float64` as the type for `case_id`, it seems like there are leading `0` for some values of this column in `collisions.csv`.
-
-Therefore in the future we will have to change the `case_id` type to `VARCHAR(M)` where `M` is the longest string representing a `case_id`. We will also need to load the data in a different way, overriding `pandas` assumed type for `case_id`.
-
-This mistake led us to have some collisions dropped as well their associated victims and parties. The queries below will therefore probably yield slightly less reliable values than expected.
-
 # How we did the import
 
 The following is implementation details that we inserted for completion.
@@ -436,11 +416,15 @@ We decided to run `MySQL` locally after failing to get acceptable performances o
 
 * In the table `Victims`, `victim_degree_of_injury` has an undefined `7` which is replaced by `NULL`. This occurs once throughout the table.
 
+## Miscellaneous
+
+From our checks, it seems like every victim and party in the `.csv` files has an attached `case_id` that exists in `collisions.csv`.
+
 # Queries - Deliverable 2
 
 As asked, we only included the first 20 rows or less.
 
-## Query 1
+# Query 1
 
 List the year and the number of collisions per year. Suppose there are more years than just 2018.
 
@@ -478,7 +462,7 @@ year | collisions_count
 2018 | 21
 2001 | 518985
 
-## Query 2
+# Query 2
 
 Find the most popular vehicle make in the database. Also list the number of vehicles of that particular
 make.
@@ -519,7 +503,7 @@ brand | vehicle_count
 :---: | :---:
 FORD | 1129719
 
-## Query 3
+# Query 3
 
 Find the fraction of total collisions that happened under dark lighting conditions.
 
@@ -1517,41 +1501,49 @@ We notice that most collisions happen during the day, which makes sense since th
 We decided to optimize the 5 following queries : 2,3,7,8 and 10.
 Our approach consists of checking the cost of the query by inspecting the Plan Analysis, then we optimize the latter by adding the appropriate indexes and we compare to the new cost after optimization.
 
-# Query 2 Optimization
+# Query 2
 
 The unoptimised version of this query leads the database to only make full scans and hash joins. The hash joins is what takes the most time, and the total cost is 1901541074130.96.
 
-We optimise the query by adding multiple indexes:
-* On `case_id` of `Collisions`
-* On `case_id` of `Parties`
-* On `party_id` of `Victims`
-* On `id` of `VehicleMake`
+![](images/query2-no-indexes.png)
 
-The total cost dropped to 108691.43, reducing it by 17494926% . Most of the decrease came from taking advantages of index when joining. 
+```SQL
+CREATE INDEX index_collision_id ON Collisions(case_id) USING HASH;
+CREATE INDEX index_parties_case_id ON Parties(case_id) USING HASH;
+CREATE INDEX index_victims_party_id ON Victims(party_id) USING HASH;
+CREATE INDEX index_vehicle_make_id ON VehicleMake(id) USING HASH;
+```
+
+The total cost dropped to 108691.43, reducing it by 17494926% . Most of the decrease came from taking advantages of index when joining, as you can see on the figure below.
+![](images/query2-indexes.png)
 
 The runtime of the query is:
 * Unoptimised: 14s700ms
 * Optimised: 1s337ms
 
-# Query 3 Optimization
+# Query 3
 
 The unoptimised version of this query leads the database to only make full scans and hash joins. The hash joins is what takes the most time, and the total cost is 3092626926820.33.
 
-We optimise the query by adding multiple indexes:
-* On `collision_severity` of `Collisions`
-* On `case_id` of `Parties`
-* On `party_id` of `Victims`
-* On `id` of `VehicleMake`
+![](images/query3-no-indexes.png)
 
-The total cost dropped to 6763992.34, reducing it by 457219%. Most of the decrease came from taking advantages of index when joining.
+We optimise the query by adding multiple indexes:
+```SQL
+CREATE INDEX index_collision_id ON Collisions(case_id) USING HASH;
+CREATE INDEX index_parties_case_id ON Parties(case_id) USING HASH;
+CREATE INDEX index_victims_party_id ON Victims(party_id) USING HASH;
+CREATE INDEX index_vehicle_make_id ON VehicleMake(id) USING HASH;
+```
+
+The total cost dropped to 6763992.34, reducing it by 457219%. Most of the decrease came from taking advantages of index when joining, as you can see on the figure below.
+
+![](images/query3-indexes.png)
 
 The runtime of the query is:
 * Unoptimised: 10s600ms
 * Optimised: 794ms
 
-# Query 7 Optmization
-
-
+# Query 7
 
 We clearly see here in the figure below that our query is costly (cost : 1888463.62) and this is due to several reasons mainly the lack of indexes to make the joins fast as well as the filter that is applied to TypeOfCollision table to find the 'pedestrian' type and to the Victim table to find age > 99 .
 
@@ -1567,15 +1559,16 @@ CREATE INDEX index_collision_type ON Collisions(type_of_collision) USING HASH;
 CREATE INDEX index_victim_case_id ON Victims(case_id) USING HASH;
 CREATE INDEX index_type_of_collision_description ON TypeOfCollision(description) USING HASH;
 ```
-The runtime of the query is:
-* Unoptimised: 10s287ms
-* Optimised: 8.898ms
 
 Here is what we got after optimization (figure below), and the cost of our query is now : 1578149.12, reducing it by 1% .
 
 ![](images/query7-indexes.png)
 
-# Query 8 Optimization
+The runtime of the query is:
+* Unoptimised: 10s287ms
+* Optimised: 8.898ms
+
+# Query 8
 
 The unoptimised version of this query leads the database to only make full scans and hash joins. The hash joins is what takes the most time (see figure below) and the total cost is : 6447580524489.79 .
 
@@ -1593,17 +1586,15 @@ CREATE INDEX index_p_caseid ON Parties(case_id) USING HASH;
 CREATE INDEX index_collision_id ON Collisions(case_id);
 ```
 
+Here is what we got after optimization (figure below), and the cost of our query is now : 12899075, reducing it by 499848% .
+
+![](images/query8-indexes.png)
+
 The runtime of the query is:
 * Unoptimised: 11mn20s
 * Optimised: 7mn54s
 
-Here is what we got after optimization (figure below), and the cost of our query is now : 12899075, reducing it by 499848% . See figure below :
-
-![](images/query8-indexes.png)
-
-
-
-# Query 10 Optimization
+# Query 10 
 
 The unoptimised version of this query leads the database to only make full scans and hash joins. The hash joins is what takes the most time as well as the filter applied to verify the following condition: ((f.lighting = l.id) or (f.lighting = NULL)).
 
@@ -1621,9 +1612,10 @@ CREATE INDEX index_lightening_description ON Lighting(description) USING HASH;
 CREATE INDEX index_lightening_id ON Lighting(id) USING HASH;
 ```
 
+Here is what we got after optimization (figure below), and the cost of our query is now : 2906812.20, reducing it by 396672%
+
+![](images/query10-indexes.png)
+
 The runtime of the query is:
 * Unoptimised: 37s203ms
 * Optimised: 29.467ms
-
-Here is what we got after optimization (figure below), and the cost of our query is now : 2906812.20, reducing it by 396672% .
-![](images/query10-indexes.png)
