@@ -434,7 +434,7 @@ We decided to run `MySQL` locally after failing to get acceptable performances o
 
 * In the table `Victims`, `victim_degree_of_injury` has an undefined `7` which is replaced by `NULL`. This occurs once throughout the table.
 
-# Queries
+# Queries - Deliverable 2
 
 As asked, we only included the first 20 rows or less.
 
@@ -757,7 +757,7 @@ and
 
 What is the fraction of all participants that have been victims of collisions while using a belt?
 
-## Query
+## Command
 
 ```SQL
 SELECT
@@ -795,6 +795,7 @@ Compute and the fraction of the collisions happening for each hour of the day (f
 where 13 means period from 13:00 to 13:59). Display the ratio as percentage for all the hours of the day.
 
 ## Command
+
 ```SQL
 SELECT
    CASE WHEN collision_time BETWEEN '00:00:00'
@@ -852,3 +853,479 @@ hour_ranges | count
 13 | 0.0578
 21 | 0.0328
 20 | 0.0349
+
+
+# Queries - Deliverable 3
+
+# Query 1
+
+# Query 2
+
+## Command
+
+```SQL 
+SELECT vt.description , COUNT(*)
+FROM(
+    SELECT p.id 
+    FROM Collisions c, Factors f, RoadCondition r, Parties p
+    WHERE c.case_id = f.case_id AND( 
+        r.id = f.road_condition_1 OR 
+        r.id = f.road_condition_2) AND
+        r.description = 'holes' AND
+        c.case_id = p.case_id ) AS parties_holes , Vehicles v , StatewideVehiculeType vt
+WHERE parties_holes.id = v.party_id AND
+      vt.id = v.statewide_vehicle_type
+GROUP BY v.statewide_vehicle_type
+ORDER BY COUNT(*) DESC
+LIMIT 5
+```
+
+## Result
+
+vehicule_type | count
+:---: | :---:
+passenger car | 10662
+pickup or panel truck | 2263
+motorcycle or scooter | 450
+bicycle | 430
+truck or truck tractor with trailer | 369
+
+# Query 3
+
+##Command
+
+```SQL
+SELECT
+  make.description,
+  COUNT(*)
+FROM
+  Vehicles v,
+  Victims vict,
+  Parties p,
+  VehiculeMake make,
+  VictimDegreeOfInjury injury
+WHERE
+  v.party_id = p.id
+  AND vict.case_id = p.case_id
+  AND v.vehicle_make = make.id
+  AND vict.victim_degree_of_injury = injury.id
+  AND (
+    injury.description = 'Killed'
+    OR injury.description = 'Severe Injury'
+  )
+GROUP BY
+  v.vehicle_make
+ORDER BY
+  COUNT(*) DESC
+LIMIT 10 
+```
+
+## Result
+
+vehicule_make | number_of_collisions
+:---: | :---:
+FORD | 31727
+CHEVROLET | 22835
+TOYOTA | 22292
+HONDA | 20212
+DODGE | 9028
+NISSAN | 8070
+GMC | 4696
+NOT STATED | 4172
+HARLEY-DAVIDSON | 3810
+MISCELLANEOUS | 3753
+
+# Query 4
+
+## Command
+
+## Result
+
+# Query 5
+
+## Command
+
+```SQL
+SELECT COUNT(*)
+FROM (SELECT statewide_vehicle_type  ,COUNT(Parties.case_id) as collisions ,COUNT(DISTINCT county_city_location) as city
+      FROM (Vehicles   INNER JOIN Parties ON Parties.id = Vehicles.party_id 
+                       INNER JOIN Locations ON Locations.case_id = Parties.id) 
+GROUP BY statewide_vehicle_type 
+) A
+WHERE A.collisions > 10 AND
+      A.city > (
+SELECT COUNT(DISTINCT county_city_location)
+FROM Locations)/2
+```
+## Result
+
+14
+
+# Query 6
+
+## Command
+
+```SQL
+SELECT
+  cities.location_id,
+  l.population,
+  l.case_id,
+  AVG(v.victim_age) as victim_mean
+FROM
+  (SELECT
+  l.county_city_location as location_id
+FROM
+  Locations l
+WHERE
+  l.population != 9
+  AND l.population != 0
+GROUP BY
+  l.county_city_location,
+  l.population
+ORDER BY
+  l.population DESC
+LIMIT
+  1 OFFSET 0) cities,
+  Locations l,
+  Victims v
+WHERE
+  (l.county_city_location = cities.location_id)
+  AND v.case_id = l.case_id
+GROUP BY
+  v.case_id,
+  l.case_id,
+  l.county_city_location,
+  l.population
+ORDER BY
+  case when AVG(v.victim_age) is null then 1 when AVG(v.victim_age) then 1 else 0 end,
+  AVG(v.victim_age)
+LIMIT
+  10) UNION 
+  
+  (SELECT
+  cities.location_id,
+  l.population,
+  l.case_id,
+  AVG(v.victim_age) as victim_mean
+FROM
+  (SELECT
+  l.location_id as location_id
+FROM
+  (
+    SELECT
+      l.county_city_location as location_id,
+      l.population as pop
+    FROM
+      Locations l
+    WHERE
+      l.population != 9
+      AND l.population != 0
+    GROUP BY
+      l.county_city_location,
+      l.population
+    ORDER BY
+      l.population DESC
+    LIMIT
+      2 OFFSET 1
+  ) l
+ORDER BY
+  l.pop ASC
+LIMIT
+  1) cities,
+  Locations l,
+  Victims v
+WHERE
+  (l.county_city_location = cities.location_id)
+  AND v.case_id = l.case_id
+GROUP BY
+  v.case_id,
+  l.case_id,
+  l.county_city_location,
+  l.population
+ORDER BY
+  case when AVG(v.victim_age) is null then 1 when AVG(v.victim_age) then 1 else 0 end,
+  AVG(v.victim_age)
+LIMIT
+  10) UNION 
+  
+  
+  (SELECT
+  cities.location_id,
+  l.population,
+  l.case_id,
+  AVG(v.victim_age) as victim_mean
+FROM
+  (SELECT
+  l.county_city_location as location_id
+FROM
+  Locations l
+WHERE
+  l.population != 9
+  AND l.population != 0
+GROUP BY
+  l.county_city_location,
+  l.population
+ORDER BY
+  l.population DESC
+LIMIT
+  1 OFFSET 3) cities,
+  Locations l,
+  Victims v
+WHERE
+  (l.county_city_location = cities.location_id)
+  AND v.case_id = l.case_id
+GROUP BY
+  v.case_id,
+  l.case_id,
+  l.county_city_location,
+  l.population
+ORDER BY
+  case when AVG(v.victim_age) is null then 1 when AVG(v.victim_age) then 1 else 0 end,
+  AVG(v.victim_age)
+LIMIT
+  10) 
+```
+  
+## Result
+
+city_location | description | collision_id | average_age
+:---: | :---: | :---: | :---:
+3711 | 7 | 0060439 | 0.0000
+3711 | 7 | 0162669 | 0.0000
+3711 | 7 | 0382996 | 0.0000
+3711 | 7 | 0347879 | 0.0000
+3711 | 7 | 0695315 | 0.0000
+3711 | 7 | 0568761 | 0.0000
+3711 | 7 | 0186147 | 0.0000
+3711 | 7 | 1034588 | 0.0000
+3711 | 7 | 0197188 | 0.0000
+3711 | 7 | 0066852 | 0.0000
+1005 | 7 | 2048203 | 0.0000
+1005 | 7 | 2376747 | 0.0000
+1005 | 7 | 0682784 | 0.0000
+1005 | 7 | 1837508 | 0.0000
+1005 | 7 | 2399236 | 0.0000
+1005 | 7 | 0644343 | 0.0000
+1005 | 7 | 0800448 | 0.0000
+1005 | 7 | 0457868 | 0.0000
+1005 | 7 | 0360320 | 0.0000
+1005 | 7 | 1186635 | 0.0000
+3019 | 7 | 2072101 | 0.0000
+3019 | 7 | 2674015 | 0.0000
+3019 | 7 | 2138547 | 0.0000
+3019 | 7 | 1170908 | 0.0000
+3019 | 7 | 2412373 | 0.0000
+3019 | 7 | 1994820 | 0.0000
+3019 | 7 | 2942932 | 0.0000
+3019 | 7 | 2715062 | 0.0000
+3019 | 7 | 1825689 | 0.0000
+3019 | 7 | 2637212 | 0.0000
+
+# Query 7
+
+## Command
+
+```SQL
+SELECT
+  old_people_collisions.id,
+  old_people_collisions.max_age
+FROM(
+    SELECT
+      v.case_id AS id,
+      MAX(v.victim_age) AS max_age
+    FROM
+      Victims v
+    GROUP BY
+      v.case_id
+    HAVING
+      MIN(v.victim_age) > 99
+  ) AS old_people_collisions,
+  Collisions c,
+  TypeOfCollision tc
+WHERE(
+    c.case_id = old_people_collisions.id
+    AND c.type_of_collision = tc.id
+    AND tc.description = 'pedestrian'
+  )
+```
+
+## Result 
+
+case_id | age
+:---: | :---:
+0036446 | 110
+0069198 | 101
+0415838 | 100
+0439197 | 102
+0445265 | 101
+0486529 | 100
+0566220 | 102
+0621752 | 100
+0644226 | 103
+0784061 | 102
+0817210 | 102
+0820619 | 101
+0828116 | 102
+0851026 | 106
+0868472 | 103
+0885420 | 100
+1209166 | 101
+1213340 | 121
+1347636 | 101
+1373664 | 101
+1548445 | 102
+1847678 | 104
+2290129 | 100
+2427260 | 100
+2472739 | 103
+2531557 | 103
+3388544 | 105
+3485436 | 101
+
+# Query 8 
+
+## Command 
+
+```SQL
+SELECT
+  makes.description,
+  v.vehicle_year,
+  type.description,
+  COUNT(*) AS num_of_collisions
+FROM
+  Vehicles v,
+  Parties p,
+  Collisions c,
+  VehiculeMake makes,
+  StatewideVehiculeType type
+WHERE
+  v.party_id = p.id AND v.vehicle_make != 'None'
+  AND p.case_id = c.case_id AND
+  v.vehicle_make = makes.id AND
+  v.statewide_vehicle_type = type.id
+GROUP BY v.vehicle_make,
+  v.vehicle_year,
+  v.statewide_vehicle_type
+HAVING(COUNT(*) > 9)
+ORDER BY
+  num_of_collisions DESC
+```
+
+## Result
+
+vehicule_make | year | type | number_of_collisions
+:---: | :---: | :---: | :---:
+TOYOTA | 2000 | passenger car | 52504
+FORD | 2000 | passenger car | 51943
+HONDA | 2000 | passenger car | 50284
+FORD | 1998 | passenger car | 49182
+TOYOTA | 2001 | passenger car | 47232
+HONDA | 2001 | passenger car | 45277
+FORD | 2001 | passenger car | 45236
+TOYOTA | 1999 | passenger car | 42941
+HONDA | 1998 | passenger car | 42091
+FORD | 1999 | passenger car | 41948
+FORD | 1995 | passenger car | 40246
+HONDA | 1997 | passenger car | 39210
+FORD | 1997 | passenger car | 38885
+HONDA | 1999 | passenger car | 38556
+TOYOTA | 2002 | passenger car | 38427
+TOYOTA | 1998 | passenger car | 38012
+TOYOTA | 1997 | passenger car | 37158
+TOYOTA | 2003 | passenger car | 35943
+HONDA | 2002 | passenger car | 35785
+FORD | 2002 | passenger car | 35460
+
+# Query 9
+
+## Command
+
+```SQL
+SELECT
+  l.county_city_location,
+  COUNT(*)
+FROM
+  Collisions c,
+  Locations l
+WHERE
+  (c.case_id = l.case_id)
+GROUP BY
+  (l.county_city_location)
+ORDER BY
+  COUNT(*) DESC
+LIMIT
+  10
+```
+
+## Result
+ 
+county_city_location | count
+:---: | :---:
+1942 | 399582
+1900 | 118446
+3400 | 80191
+3711 | 76867
+109 | 72995
+3300 | 61453
+3404 | 58068
+4313 | 57852
+1941 | 53565
+3801 | 48450
+
+# Query 10
+
+## Command
+
+```SQL
+SELECT
+  CASE WHEN l.description = 'daylight'
+  OR (
+    f.lighting = NULL
+    AND c.collision_time BETWEEN '00:08:00'
+    AND '17:59:00'
+  ) THEN 'day' WHEN (
+    f.lighting = NULL
+    AND c.collision_time BETWEEN '00:06:00'
+    AND '07:59:00'
+  )
+  OR (
+    l.description = 'dusk or dawn'
+    AND (
+      c.collision_time BETWEEN '00:06:00'
+      AND '07:59:00'
+    )
+  ) THEN 'dawn' WHEN (
+    f.lighting = NULL
+    AND c.collision_time BETWEEN '00:18:00'
+    AND '19:59:00'
+  )
+  OR (
+    l.description = 'dusk or dawn'
+    AND (
+      c.collision_time BETWEEN '00:18:00'
+      AND '19:59:00'
+    )
+  ) THEN 'dusk' ELSE 'night' END AS time_of_day,
+  count(1) as num
+FROM
+  Factors f,
+  Lighting l,
+  Collisions c
+WHERE
+  f.case_id = c.case_id
+  AND (
+    f.lighting = l.id
+    OR f.lighting = NULL
+  )
+GROUP BY
+  time_of_day
+```
+
+## Result
+
+day_time | count
+:---: | :---:
+night | 1039682
+day | 2496938
+dusk | 74906
+dawn | 40756
