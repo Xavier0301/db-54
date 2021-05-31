@@ -844,6 +844,57 @@ None | 0.80600
 
 # Query 1
 
+## Comand
+
+```SQL
+SELECT
+  q1.AgeGroup as age_group,
+  q2.Count * 100.0 / q1.Count AS percentage
+FROM
+  (
+    SELECT
+      CASE WHEN party_age BETWEEN 0
+      AND 18 THEN 'Underage' WHEN party_age BETWEEN 19
+      AND 21 THEN 'Young I' WHEN party_age BETWEEN 22
+      AND 24 THEN 'Young II' WHEN party_age BETWEEN 24
+      AND 60 THEN 'Adult' WHEN party_age BETWEEN 61
+      AND 64 THEN 'Elder I' ELSE 'Elder II' END AS AgeGroup,
+      count(1) AS Count
+    FROM
+      Parties
+    GROUP BY
+      AgeGroup
+  ) q1
+  INNER JOIN (
+    SELECT
+      CASE WHEN p.party_age BETWEEN 0
+      AND 18 THEN 'Underage' WHEN p.party_age BETWEEN 18
+      AND 21 THEN 'Young I' WHEN p.party_age BETWEEN 21
+      AND 24 THEN 'Young II' WHEN p.party_age BETWEEN 24
+      AND 60 THEN 'Adult' WHEN p.party_age BETWEEN 60
+      AND 64 THEN 'Elder I' ELSE 'Elder II' END AS AgeGroup,
+      count(1) AS Count
+    FROM
+      Parties p
+    WHERE
+      p.at_fault = true
+      AND p.party_type IN (SELECT id FROM PartyType WHERE description='driver')
+    GROUP BY
+      AgeGroup
+  ) q2 ON q1.AgeGroup = q2.AgeGroup
+```
+
+## Result
+
+age_group | percentage
+:---: | :---:
+Young I | 56.28855
+Underage | 56.44656
+Adult | 40.01389
+Elder II | 43.00967
+Young II | 50.83931
+Elder I | 38.93744
+
 # Query 2
 
 ## Command
@@ -924,7 +975,119 @@ MISCELLANEOUS | 3753
 
 ## Command
 
+Part 1: computing the safety index for each.
+```SQL
+SELECT
+  q1.SeatingPosition,
+  q2.Count / q1.Count AS SafetyIndex
+FROM
+  (
+    SELECT
+      CASE WHEN victim_seating_position BETWEEN 1
+      AND 1 THEN 'Driver' WHEN victim_seating_position BETWEEN 2
+      AND 6 THEN 'Passenger' WHEN victim_seating_position BETWEEN 7
+      AND 7 THEN 'Station Wagon Rear' WHEN victim_seating_position BETWEEN 8
+      AND 8 THEN 'Rear Occupant of Truck or Van' WHEN victim_seating_position BETWEEN 9
+      AND 9 THEN 'Position Unknown' WHEN victim_seating_position BETWEEN 0
+      AND 0 THEN 'Other Occupants' WHEN victim_seating_position BETWEEN 'A'
+      AND 'Z' THEN 'Bus Occupants' ELSE 'Not Stated' END AS SeatingPosition,
+      count(1) AS Count
+    FROM
+      Victims
+    GROUP BY
+      SeatingPosition
+  ) q1
+  INNER JOIN (
+    SELECT
+      CASE WHEN victim_seating_position BETWEEN 1
+      AND 1 THEN 'Driver' WHEN victim_seating_position BETWEEN 2
+      AND 6 THEN 'Passenger' WHEN victim_seating_position BETWEEN 7
+      AND 7 THEN 'Station Wagon Rear' WHEN victim_seating_position BETWEEN 8
+      AND 8 THEN 'Rear Occupant of Truck or Van' WHEN victim_seating_position BETWEEN 9
+      AND 9 THEN 'Position Unknown' WHEN victim_seating_position BETWEEN 0
+      AND 0 THEN 'Other Occupants' WHEN victim_seating_position BETWEEN 'A'
+      AND 'Z' THEN 'Bus Occupants' ELSE 'Not Stated' END AS SeatingPosition,
+      count(1) AS Count
+    FROM
+      Victims
+    WHERE
+      victim_degree_of_injury IN (SELECT id FROM VictimDegreeOfInjury WHERE description='no injury')
+    GROUP BY
+      SeatingPosition
+  ) q2 ON q1.SeatingPosition = q2.SeatingPosition
+```
+
+Part 2: Retrieving the min and the max.
+
+```SQL
+CREATE VIEW SafetyIndexes AS 
+  (SELECT
+    q1.SeatingPosition,
+    q2.Count / q1.Count AS SafetyIndex
+  FROM
+  (
+    SELECT
+    CASE WHEN victim_seating_position BETWEEN 1
+    AND 1 THEN 'Driver' WHEN victim_seating_position BETWEEN 2
+    AND 6 THEN 'Passenger' WHEN victim_seating_position BETWEEN 7
+    AND 7 THEN 'Station Wagon Rear' WHEN victim_seating_position BETWEEN 8
+    AND 8 THEN 'Rear Occupant of Truck or Van' WHEN victim_seating_position BETWEEN 9
+    AND 9 THEN 'Position Unknown' WHEN victim_seating_position BETWEEN 0
+    AND 0 THEN 'Other Occupants' WHEN victim_seating_position BETWEEN 'A'
+    AND 'Z' THEN 'Bus Occupants' ELSE 'Not Stated' END AS SeatingPosition,
+    count(1) AS Count
+    FROM
+    Victims
+    GROUP BY
+    SeatingPosition
+  ) q1
+  INNER JOIN (
+    SELECT
+    CASE WHEN victim_seating_position BETWEEN 1
+    AND 1 THEN 'Driver' WHEN victim_seating_position BETWEEN 2
+    AND 6 THEN 'Passenger' WHEN victim_seating_position BETWEEN 7
+    AND 7 THEN 'Station Wagon Rear' WHEN victim_seating_position BETWEEN 8
+    AND 8 THEN 'Rear Occupant of Truck or Van' WHEN victim_seating_position BETWEEN 9
+    AND 9 THEN 'Position Unknown' WHEN victim_seating_position BETWEEN 0
+    AND 0 THEN 'Other Occupants' WHEN victim_seating_position BETWEEN 'A'
+    AND 'Z' THEN 'Bus Occupants' ELSE 'Not Stated' END AS SeatingPosition,
+    count(1) AS Count
+    FROM
+    Victims
+    WHERE
+    victim_degree_of_injury IN (SELECT id FROM VictimDegreeOfInjury WHERE description='no injury')
+    GROUP BY
+    SeatingPosition
+  ) q2 ON q1.SeatingPosition = q2.SeatingPosition)
+
+SELECT 
+  *
+FROM 
+  SafetyIndexes
+WHERE
+  SafetyIndex IN (
+    (SELECT MIN(SafetyIndex) FROM SafetyIndexes),
+    (SELECT MAX(SafetyIndex) FROM SafetyIndexes)
+  )
+```
+
 ## Result
+
+Part 1: 
+
+seating_position | safety_index
+:---: | :---:
+Passenger | 0.7548
+Position Unknown | 0.3440
+Other Occupants | 0.6244
+Rear Occupant of Truck or Van | 0.8177
+Station Wagon Rear | 0.8251
+Not Stated | 0.1822
+Driver | 0.0090
+
+Part 2:
+
+
 
 # Query 5
 
