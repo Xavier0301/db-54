@@ -1581,6 +1581,31 @@ Here is what we got after optimization (figure below), and the cost of our query
 
 # Query 8 Optimization
 
+The unoptimised version of this query leads the database to only make full scans and hash joins. The hash joins is what takes the most time (see figure below) and the total cost is : 6447580524489.79 .
+
+![](images/query8-no-indexes.png)
+
+Thus we decide to create the following indexes : 
+
+```SQL
+CREATE INDEX index_statewide_vehicle ON Vehicles(statewide_vehicle_type) USING HASH;
+CREATE INDEX index_vehicle_make ON Vehicles(vehicle_make) USING HASH;
+CREATE INDEX index_vehicle_year ON Vehicles(vehicle_year) USING HASH;
+CREATE INDEX index_v_party_id ON Vehicles(party_id) USING HASH;
+CREATE INDEX index_p_id ON Parties(id,case_id);
+CREATE INDEX index_collision_id ON Collisions(case_id);
+```
+
+The runtime of the query is:
+* Unoptimised: 11mn20s
+* Optimised: 7mn54s
+
+Here is what we got after optimization (figure below), and the cost of our query is now : 12899075 . () See figure below :
+
+![](images/query8-indexes.png)
+
+
+
 # Query 10 Optimization
 
 The unoptimised version of this query leads the database to only make full scans and hash joins. The hash joins is what takes the most time as well as the filter applied to verify the following condition: ((f.lighting = l.id) or (f.lighting = NULL)).
