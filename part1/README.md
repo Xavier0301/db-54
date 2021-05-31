@@ -1490,7 +1490,7 @@ Our approach consists of checking the cost of the query by inspecting the Plan A
 
 # Query 2 Optimization
 
-The unoptimised version of this query leads the database to only make full scans and hash joins. The has joins is what takes the most time, and the total cost is 1901541074130.96.
+The unoptimised version of this query leads the database to only make full scans and hash joins. The hash joins is what takes the most time, and the total cost is 1901541074130.96.
 
 We optimise the query by adding multiple indexes:
 * On `case_id` of `Collisions`
@@ -1523,7 +1523,7 @@ LIMIT 5
 
 # Query 3 Optimization
 
-The unoptimised version of this query leads the database to only make full scans and hash joins. The has joins is what takes the most time, and the total cost is 3092626926820.33.
+The unoptimised version of this query leads the database to only make full scans and hash joins. The hash joins is what takes the most time, and the total cost is 3092626926820.33.
 
 We optimise the query by adding multiple indexes:
 * On `collision_severity` of `Collisions`
@@ -1555,8 +1555,7 @@ LIMIT 10;
 
 # Query 7 Optmization
 
-### Running time before optimization : 10.287 s
-### Running time after optimization : 8.898 s
+
 
 We clearly see here in the figure below that our query is costly (cost : 1888463.62) and this is due to several reasons mainly the lack of indexes to make the joins fast as well as the filter that is applied to TypeOfCollision table to find the 'pedestrian' type and to the Victim table to find age > 99 .
 
@@ -1572,9 +1571,11 @@ CREATE INDEX index_collision_type ON Collisions(type_of_collision) USING HASH;
 CREATE INDEX index_victim_case_id ON Victims(case_id) USING HASH;
 CREATE INDEX index_type_of_collision_description ON TypeOfCollision(description) USING HASH;
 ```
+The runtime of the query is:
+* Unoptimised: 10s287ms
+* Optimised: 8.898ms
 
-
-Here is what we got after optimization (figure below), and the cost of our query is now : 1578149.12
+Here is what we got after optimization (figure below), and the cost of our query is now : 1578149.12 .
 
 ![](images/query7-indexes.png)
 
@@ -1582,6 +1583,24 @@ Here is what we got after optimization (figure below), and the cost of our query
 
 # Query 10 Optimization
 
+The unoptimised version of this query leads the database to only make full scans and hash joins. The hash joins is what takes the most time as well as the filter applied to verify the following condition: ((f.lighting = l.id) or (f.lighting = NULL)).
+
+The total cost is 1153051835865.08 . (see figure below)
+
 ![](images/query10-no-indexes.png)
 
+Thus, we decide to create the following indexes : 
+```SQL
+CREATE INDEX index_factor_case_id ON Factors(case_id) USING HASH;
+CREATE INDEX index_collision_time ON Collisions(collision_time) USING BTREE;
+CREATE INDEX index_factors_lightening ON Factors(lighting) USING HASH;
+CREATE INDEX index_lightening_description ON Lighting(description) USING HASH;
+CREATE INDEX index_lightening_id ON Lighting(id) USING HASH;
+```
+
+The runtime of the query is:
+* Unoptimised: 37s203ms
+* Optimised: 29.467ms
+
+Here is what we got after optimization (figure below), and the cost of our query is now : 2906812.20 .
 ![](images/query10-indexes.png)
