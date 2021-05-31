@@ -1331,3 +1331,21 @@ night | 1039682
 day | 2496938
 dusk | 74906
 dawn | 40756
+
+
+
+
+# Optimization Part
+We decided to optimize the 5 following queries : 2,3,7,8 and 10.
+Our approach consists of checking the cost of the query by inspecting the Plan Analysis, then we optimize the latter by adding the appropriate indexes and we compare to the new cost after optimization.
+
+# Query 2 Optimization 
+
+# Query 3 Optimization
+
+# Query 7 Optmization
+
+
+
+
+
