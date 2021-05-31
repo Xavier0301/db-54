@@ -64,7 +64,7 @@ The obvious groups are:
 ### Main Tables
 
 ```SQL
-CREATE TABLE Collisions(case_id NUMERIC(19), 
+CREATE TABLE Collisions(case_id VARCHAR(19), 
                         collision_date DATE NOT NULL,
                         collision_time TIME,
                         type_of_collision INTEGER,
@@ -78,7 +78,7 @@ CREATE TABLE Collisions(case_id NUMERIC(19),
 ```
 
 ```SQL
-CREATE TABLE Pcfs(case_id NUMERIC(19) NOT NULL,
+CREATE TABLE Pcfs(case_id VARCHAR(19) NOT NULL,
                     pcf_violation INTEGER,
                     pcf_violation_category INTEGER,
                     pcf_violation_subsection CHAR(1),
@@ -87,14 +87,14 @@ CREATE TABLE Pcfs(case_id NUMERIC(19) NOT NULL,
 ```
 
 ```SQL
-CREATE TABLE Locations(case_id NUMERIC(19) NOT NULL,
+CREATE TABLE Locations(case_id VARCHAR(19) NOT NULL,
                         population INTEGER,
                         county_city_location INTEGER NOT NULL,
                         FOREIGN KEY(case_id) REFERENCES Collisions(case_id))
 ```
 
 ```SQL
-CREATE TABLE Factors(case_id NUMERIC(19) NOT NULL,
+CREATE TABLE Factors(case_id VARCHAR(19) NOT NULL,
                         location_type INTEGER,
                         lighting INTEGER,
                         road_condition_1 INTEGER,
@@ -113,7 +113,7 @@ CREATE TABLE Factors(case_id NUMERIC(19) NOT NULL,
 ```
 
 ```SQL
-CREATE TABLE Cases(case_id NUMERIC(19) NOT NULL,
+CREATE TABLE Cases(case_id VARCHAR(19) NOT NULL,
                     process_date DATE NOT NULL,
                     officer_id VARCHAR(8),
                     jurisdiction INTEGER,
@@ -189,8 +189,9 @@ CREATE TABLE Weather(id INTEGER AUTO_INCREMENT,
 
 ```SQL
 CREATE TABLE Parties(id INTEGER,
-                        case_id NUMERIC(19) NOT NULL,
+                        case_id VARCHAR(19) NOT NULL,
                         party_number INTEGER NOT NULL,
+                        party_type INTEGER,
                         finanicial_responsibility INTEGER,
                         party_age INTEGER,
                         party_sex INTEGER,
@@ -205,6 +206,7 @@ CREATE TABLE Parties(id INTEGER,
                         party_safety_equipment_2 INTEGER,
                         party_sobriety INTEGER,
                         PRIMARY KEY(id, case_id),
+                        FOREIGN KEY(party_type) REFERENCES PartyType(id),
                         FOREIGN KEY(finanicial_responsibility) REFERENCES FinancialResponsability(id),
                         FOREIGN KEY(party_sex) REFERENCES PersonSex(id),
                         FOREIGN KEY(cellphone_use) REFERENCES CellphoneUse(id),
@@ -312,7 +314,7 @@ CREATE TABLE VehiculeMake(id INTEGER AUTO_INCREMENT,
 
 ```SQL
 CREATE TABLE Victims(id INTEGER,
-                        case_id NUMERIC(19) NOT NULL,
+                        case_id VARCHAR(19) NOT NULL,
                         party_number INTEGER NOT NULL,
                         victim_age INTEGER,
                         victim_sex INTEGER,
