@@ -1087,7 +1087,10 @@ Driver | 0.0090
 
 Part 2:
 
-
+seating_position | safety_index
+:---: | :---:
+Station Wagon Rear | 0.8251
+Driver | 0.0090
 
 # Query 5
 
@@ -1513,10 +1516,6 @@ CREATE INDEX index_type_of_collision_description ON TypeOfCollision(description)
 Here is what we got after optimization (figure below), and the cost of our query is now : 1578149.12
 
 ![](images/query7-indexes.png)
-
-
-
-
 
 # Query 8 Optimization
 
