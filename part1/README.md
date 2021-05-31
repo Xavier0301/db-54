@@ -1336,7 +1336,7 @@ We clearly see here in the figure below that our query is costly (cost : 1888463
 ![](images/query7-no-indexes.png)
 
 
-Thus, we decide to create the following the following indexes :
+Thus, we decide to create the following indexes :
 ```SQL
 CREATE INDEX index_victim_age ON Victims(victim_age) USING BTREE;
 CREATE INDEX index_collision_id ON Collisions(case_id) USING HASH;
@@ -1349,7 +1349,7 @@ CREATE INDEX index_type_of_collision_description ON TypeOfCollision(description)
 
 Here is what we got after optimization (figure below), and the cost of our query is now : 1578149.12
 
-![](images/query7-indexes)
+![](images/query7-indexes.png)
 
 
 
