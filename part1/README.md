@@ -1592,7 +1592,8 @@ CREATE INDEX index_statewide_vehicle ON Vehicles(statewide_vehicle_type) USING H
 CREATE INDEX index_vehicle_make ON Vehicles(vehicle_make) USING HASH;
 CREATE INDEX index_vehicle_year ON Vehicles(vehicle_year) USING HASH;
 CREATE INDEX index_v_party_id ON Vehicles(party_id) USING HASH;
-CREATE INDEX index_p_id ON Parties(id,case_id);
+CREATE INDEX index_p_id ON Parties(id);
+CREATE INDEX index_p_caseid ON Parties(case_id) USING HASH;
 CREATE INDEX index_collision_id ON Collisions(case_id);
 ```
 
@@ -1618,6 +1619,7 @@ Thus, we decide to create the following indexes :
 ```SQL
 CREATE INDEX index_factor_case_id ON Factors(case_id) USING HASH;
 CREATE INDEX index_collision_time ON Collisions(collision_time) USING BTREE;
+CREATE INDEX index_collision_caseid ON Collisions(case_id) USING HASH;
 CREATE INDEX index_factors_lightening ON Factors(lighting) USING HASH;
 CREATE INDEX index_lightening_description ON Lighting(description) USING HASH;
 CREATE INDEX index_lightening_id ON Lighting(id) USING HASH;
